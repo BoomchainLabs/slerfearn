@@ -74,7 +74,7 @@ export default function ApiDocs() {
         description: "Please wait while we publish the API documentation to GitBook...",
       });
       
-      const response = await apiRequest('/api/gitbook/publish-openapi', {
+      const response = await fetch('/api/gitbook/publish-openapi', {
         method: 'POST',
       });
       

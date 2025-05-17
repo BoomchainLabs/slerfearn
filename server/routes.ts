@@ -587,6 +587,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(referrals);
   });
 
+  // GitBook Documentation routes
+  router.get('/gitbook/docs/:page', handleGitBookRequest);
+  
+  router.post('/gitbook/publish-openapi', async (req: Request, res: Response) => {
+    try {
+      const { exec } = require('child_process');
+      const { promisify } = require('util');
+      const execAsync = promisify(exec);
+      
+      // Verify GitBook token exists
+      if (!process.env.GITBOOK_TOKEN) {
+        return res.status(401).json({ 
+          message: "GitBook token not found. Please set the GITBOOK_TOKEN environment variable."
+        });
+      }
+      
+      console.log('Publishing OpenAPI spec to GitBook...');
+      
+      const result = await execAsync(
+        'node scripts/publish-openapi-to-gitbook.js ' + 
+        '--spec boomchainlab-organization-api ' + 
+        '--organization 3wJ7o4ruv7ICq5Y1wxga ' + 
+        '--file ./openapi/openapi.json'
+      );
+      
+      console.log('OpenAPI spec successfully published to GitBook');
+      
+      res.status(200).json({ 
+        message: "OpenAPI specification successfully published to GitBook",
+        details: result.stdout 
+      });
+    } catch (error) {
+      console.error('Error publishing OpenAPI spec to GitBook:', error);
+      res.status(500).json({ 
+        message: "Failed to publish OpenAPI specification to GitBook",
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
   // Mount all routes with /api prefix
   app.use('/api', router);
 
