@@ -46,6 +46,14 @@ const topHolders = [
 const topPlayers = [
   { 
     rank: 1, 
+    username: 'Sylvestre Villalba', 
+    address: '0xE37bF...6C9d', 
+    score: 18900, 
+    earnedTokens: 22500, 
+    avatar: 'https://api.dicebear.com/7.x/personas/svg?seed=sylvestre&backgroundColor=ffcf70'
+  },
+  { 
+    rank: 2, 
     username: 'crypto_king', 
     address: '0x7a25E...3A8b', 
     score: 12500, 
@@ -53,7 +61,7 @@ const topPlayers = [
     avatar: 'https://api.dicebear.com/7.x/personas/svg?seed=crypto_king&backgroundColor=b6e3f4'
   },
   { 
-    rank: 2, 
+    rank: 3, 
     username: 'lerf_master', 
     address: '0x18bF1...9C4a', 
     score: 11200, 
@@ -61,7 +69,7 @@ const topPlayers = [
     avatar: 'https://api.dicebear.com/7.x/personas/svg?seed=lerf_master&backgroundColor=c0aede'
   },
   { 
-    rank: 3, 
+    rank: 4, 
     username: 'token_whale', 
     address: '0x0F3d2...6E1c', 
     score: 9800, 
@@ -69,20 +77,12 @@ const topPlayers = [
     avatar: 'https://api.dicebear.com/7.x/personas/svg?seed=token_whale&backgroundColor=d1d4f9'
   },
   { 
-    rank: 4, 
+    rank: 5, 
     username: 'blockchain_guru', 
     address: '0xA230B...7D5b', 
     score: 8500, 
     earnedTokens: 10200, 
     avatar: 'https://api.dicebear.com/7.x/personas/svg?seed=blockchain_guru&backgroundColor=ffdfbf'
-  },
-  { 
-    rank: 5, 
-    username: 'defi_degen', 
-    address: '0x63a9C...8F1d', 
-    score: 7200, 
-    earnedTokens: 8500, 
-    avatar: 'https://api.dicebear.com/7.x/personas/svg?seed=defi_degen&backgroundColor=c0e7c0'
   },
 ];
 
