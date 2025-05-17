@@ -172,26 +172,26 @@ const Dashboard: React.FC = () => {
       initial="hidden"
       animate="visible"
       variants={fadeIn}
-      className="container mx-auto px-4 py-8 space-y-8"
+      className="container mx-auto max-w-7xl px-4 md:px-6 py-10 space-y-10"
     >
       {/* Dashboard Header with Stats */}
-      <div className="glass p-6 rounded-xl">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6">
+      <div className="glass p-8 rounded-xl">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-8">
           <div className="flex items-center">
-            <img src={slerfLogo} alt="$LERF Logo" className="h-12 w-12 mr-4" />
+            <img src={slerfLogo} alt="$LERF Logo" className="h-16 w-16 mr-5" />
             <div>
-              <h1 className="text-3xl font-bold font-space">$LERF Dashboard</h1>
-              <p className="text-gray-400">Engage, Earn, and Explore the $LERF Ecosystem</p>
+              <h1 className="text-4xl font-bold font-space">$LERF Dashboard</h1>
+              <p className="text-gray-400 text-lg mt-1">Engage, Earn, and Explore the $LERF Ecosystem</p>
             </div>
           </div>
           
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-4">
             <MultiWalletConnect />
             <GitHubConnect />
             
             {wallet && (
-              <Button variant="outline" className="border-slerf-orange text-slerf-orange">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <Button variant="outline" className="border-slerf-orange text-slerf-orange h-11 px-5">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
                 </svg>
@@ -201,7 +201,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           <Card className="bg-slerf-dark-light border-slerf-dark-lighter">
             <CardHeader className="p-3 pb-0">
               <CardTitle className="text-sm text-gray-400">$LERF Price</CardTitle>
@@ -256,71 +256,71 @@ const Dashboard: React.FC = () => {
       
       {/* User Stats and Level */}
       {wallet && (
-        <div className="glass p-6 rounded-xl">
-          <div className="flex items-center justify-between mb-4">
+        <div className="glass p-8 rounded-xl">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 gap-6">
             <div className="flex items-center">
               <div className="relative">
-                <div className="w-16 h-16 rounded-full overflow-hidden bg-slerf-dark-light">
+                <div className="w-20 h-20 rounded-full overflow-hidden bg-slerf-dark-light border-2 border-slerf-cyan/30">
                   <img 
                     src="https://api.dicebear.com/7.x/personas/svg?seed=lerf_user&backgroundColor=d1d4f9" 
                     alt="User Avatar"
                     className="w-full h-full object-cover" 
                   />
                 </div>
-                <div className="absolute -bottom-1 -right-1 bg-slerf-cyan text-slerf-dark font-bold text-xs p-1 rounded-full w-7 h-7 flex items-center justify-center">
+                <div className="absolute -bottom-2 -right-2 bg-slerf-cyan text-slerf-dark font-bold text-sm p-1 rounded-full w-9 h-9 flex items-center justify-center shadow-lg">
                   Lv{userLevel}
                 </div>
               </div>
               
-              <div className="ml-4">
-                <h2 className="text-xl font-bold">Welcome back, {wallet.address?.substring(0, 6)}...</h2>
-                <div className="flex items-center text-sm text-gray-400">
+              <div className="ml-5">
+                <h2 className="text-2xl font-bold">Welcome back, {wallet.address?.substring(0, 6)}...</h2>
+                <div className="flex items-center text-base text-gray-300 mt-1">
                   <span>Level {userLevel} • {userXP}/{nextLevelXP} XP</span>
                 </div>
               </div>
             </div>
             
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="flex items-center gap-8 w-full lg:w-auto justify-between lg:justify-end">
               <div className="text-center">
-                <div className="text-2xl font-bold">2,450</div>
-                <div className="text-xs text-gray-400">$LERF Earned</div>
+                <div className="text-3xl font-bold text-slerf-cyan">2,450</div>
+                <div className="text-sm text-gray-300 mt-1">$LERF Earned</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">12</div>
-                <div className="text-xs text-gray-400">Quests Completed</div>
+                <div className="text-3xl font-bold text-slerf-purple">12</div>
+                <div className="text-sm text-gray-300 mt-1">Quests Completed</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">3</div>
-                <div className="text-xs text-gray-400">NFT Boosters</div>
+                <div className="text-3xl font-bold text-slerf-orange">3</div>
+                <div className="text-sm text-gray-300 mt-1">NFT Boosters</div>
               </div>
             </div>
           </div>
           
-          <div className="mb-4">
-            <div className="flex justify-between text-sm mb-2">
+          <div className="mb-6">
+            <div className="flex justify-between text-base mb-3">
               <span>Progress to Level {userLevel + 1}</span>
-              <span>{userXP}/{nextLevelXP} XP</span>
+              <span className="font-medium">{userXP}/{nextLevelXP} XP</span>
             </div>
-            <Progress value={xpProgress} className="h-2" />
+            <Progress value={xpProgress} className="h-3" />
           </div>
           
-          <div className="flex flex-wrap gap-3">
-            <Button className="bg-slerf-cyan text-slerf-dark hover:bg-slerf-cyan/90">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className="flex flex-wrap gap-4 pt-2">
+            <Button className="bg-slerf-cyan text-slerf-dark hover:bg-slerf-cyan/90 h-12 px-6 text-base">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <path d="M12 8v4l2 2"></path>
               </svg>
               Daily Missions
             </Button>
-            <Button variant="outline">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <Button variant="outline" className="h-12 px-6 text-base">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="9 11 12 14 22 4"></polyline>
                 <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
               </svg>
               Weekly Quests
             </Button>
-            <Button variant="outline">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <Button variant="outline" className="h-12 px-6 text-base">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                 <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
                 <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
@@ -335,18 +335,18 @@ const Dashboard: React.FC = () => {
       )}
       
       {/* Main Dashboard Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="glass p-6 rounded-xl">
-        <TabsList className="grid grid-cols-4 md:grid-cols-5 w-full mb-6">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="trading">Trading</TabsTrigger>
-          <TabsTrigger value="network">Network</TabsTrigger>
-          <TabsTrigger value="liquidity">Liquidity</TabsTrigger>
-          <TabsTrigger value="social" className="hidden md:flex">Social</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="glass p-8 rounded-xl">
+        <TabsList className="grid grid-cols-4 md:grid-cols-5 w-full mb-8 p-1.5">
+          <TabsTrigger value="overview" className="px-5 py-3 text-base">Overview</TabsTrigger>
+          <TabsTrigger value="trading" className="px-5 py-3 text-base">Trading</TabsTrigger>
+          <TabsTrigger value="network" className="px-5 py-3 text-base">Network</TabsTrigger>
+          <TabsTrigger value="liquidity" className="px-5 py-3 text-base">Liquidity</TabsTrigger>
+          <TabsTrigger value="social" className="hidden md:flex px-5 py-3 text-base">Social</TabsTrigger>
         </TabsList>
         
         {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <TabsContent value="overview" className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <Card className="bg-slerf-dark-light border-slerf-dark-lighter h-full">
                 <CardHeader>
