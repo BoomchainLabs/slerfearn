@@ -328,31 +328,79 @@ const Documentation: React.FC = () => {
               
               <motion.div variants={itemFadeIn} className="mt-8">
                 <h2 className="text-2xl font-bold mb-4 flex items-center">
-                  <span className="text-slerf-cyan mr-2">➤</span> Tokenomics Sustainability
+                  <span className="text-slerf-cyan mr-2">➤</span> Advanced Engagement Features
                 </h2>
-                <div className="glass p-4 rounded-lg">
-                  <h3 className="text-xl font-medium mb-3">Token Burn Mechanism</h3>
+                <div className="glass p-4 rounded-lg mb-6">
+                  <h3 className="text-xl font-medium mb-3">Automated Micro-Tasks & Rewards Loop</h3>
                   <p className="text-gray-300 mb-4">
-                    To ensure long-term token value, SlerfHub implements a deflationary model where:
+                    SlerfHub implements a continuous engagement system that incentivizes frequent platform interactions:
                   </p>
                   <ul className="space-y-2 text-gray-300">
                     <li className="flex items-start">
                       <span className="text-slerf-cyan mr-2">•</span>
-                      <span>5% of marketplace transaction fees are burned</span>
+                      <span>5-minute cooldown faucet for claiming small token rewards</span>
                     </li>
                     <li className="flex items-start">
                       <span className="text-slerf-cyan mr-2">•</span>
-                      <span>2% of staking rewards are burned</span>
+                      <span>Auto-staking and auto-compounding smart contracts</span>
                     </li>
                     <li className="flex items-start">
                       <span className="text-slerf-cyan mr-2">•</span>
-                      <span>Quarterly token burns based on platform growth metrics</span>
+                      <span>Quick "spin the wheel" mini-games with token prizes</span>
                     </li>
                     <li className="flex items-start">
                       <span className="text-slerf-cyan mr-2">•</span>
-                      <span>Special burn events tied to community milestones</span>
+                      <span>Real-time challenges with tiered reward multipliers</span>
                     </li>
                   </ul>
+                </div>
+                
+                <div className="glass p-4 rounded-lg">
+                  <h3 className="text-xl font-medium mb-3">Token Value & Sustainability Mechanisms</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-medium mb-2">Deflationary Model</h4>
+                      <ul className="space-y-2 text-gray-300">
+                        <li className="flex items-start">
+                          <span className="text-slerf-cyan mr-2">•</span>
+                          <span>5% of marketplace transaction fees are burned</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-slerf-cyan mr-2">•</span>
+                          <span>2% of staking rewards are burned</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-slerf-cyan mr-2">•</span>
+                          <span>Quarterly burns based on platform metrics</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-slerf-cyan mr-2">•</span>
+                          <span>Special burn events tied to milestones</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2">Transaction Volume Drivers</h4>
+                      <ul className="space-y-2 text-gray-300">
+                        <li className="flex items-start">
+                          <span className="text-slerf-cyan mr-2">•</span>
+                          <span>On-chain activity farming with safeguards</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-slerf-cyan mr-2">•</span>
+                          <span>Hourly/daily resetting leaderboards</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-slerf-cyan mr-2">•</span>
+                          <span>Dynamic reward multipliers for engagement</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-slerf-cyan mr-2">•</span>
+                          <span>Integration with external DeFi ecosystems</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             </motion.div>
@@ -434,11 +482,15 @@ const Documentation: React.FC = () => {
                         </div>
                         <div className="flex items-start">
                           <div className="w-5 h-5 rounded-full bg-blue-500 flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">➔</div>
-                          <p>Expanded marketplace with peer-to-peer trading</p>
+                          <p>Automated micro-tasks with 5-minute cooldown rewards system</p>
                         </div>
                         <div className="flex items-start">
                           <div className="w-5 h-5 rounded-full bg-blue-500 flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">➔</div>
                           <p>Mobile app beta release (iOS & Android)</p>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-5 h-5 rounded-full bg-blue-500 flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">➔</div>
+                          <p>Auto-staking smart contracts with compounding rewards</p>
                         </div>
                         <div className="flex items-start">
                           <div className="w-5 h-5 rounded-full bg-slerf-dark-light flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">⌛</div>
@@ -472,15 +524,19 @@ const Documentation: React.FC = () => {
                         </div>
                         <div className="flex items-start">
                           <div className="w-5 h-5 rounded-full bg-slerf-dark-light flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">⌛</div>
+                          <p>On-chain activity farming with rate-limiting and safeguards</p>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-5 h-5 rounded-full bg-slerf-dark-light flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">⌛</div>
+                          <p>Real-time challenges with tiered reward multipliers</p>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-5 h-5 rounded-full bg-slerf-dark-light flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">⌛</div>
                           <p>Integration with major Web3 game ecosystems</p>
                         </div>
                         <div className="flex items-start">
                           <div className="w-5 h-5 rounded-full bg-slerf-dark-light flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">⌛</div>
                           <p>Advanced analytics dashboard for users</p>
-                        </div>
-                        <div className="flex items-start">
-                          <div className="w-5 h-5 rounded-full bg-slerf-dark-light flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">⌛</div>
-                          <p>Expanded social features with reputation system</p>
                         </div>
                       </div>
                     </div>
@@ -505,7 +561,7 @@ const Documentation: React.FC = () => {
                         </div>
                         <div className="flex items-start">
                           <div className="w-5 h-5 rounded-full bg-slerf-dark-light flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">⌛</div>
-                          <p>Creator program for community-built quests and missions</p>
+                          <p>Integration with DeFi protocols for expanded utility</p>
                         </div>
                         <div className="flex items-start">
                           <div className="w-5 h-5 rounded-full bg-slerf-dark-light flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">⌛</div>
@@ -518,6 +574,10 @@ const Documentation: React.FC = () => {
                         <div className="flex items-start">
                           <div className="w-5 h-5 rounded-full bg-slerf-dark-light flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">⌛</div>
                           <p>Layer 2 solution for improved scalability</p>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-5 h-5 rounded-full bg-slerf-dark-light flex-shrink-0 flex items-center justify-center mr-2 mt-0.5">⌛</div>
+                          <p>Advanced monitoring & analytics for transaction patterns</p>
                         </div>
                       </div>
                     </div>
