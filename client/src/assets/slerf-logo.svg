@@ -2,10 +2,6 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Gradient definitions -->
   <defs>
-    <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1E90FF" /> <!-- Electric Blue -->
-      <stop offset="100%" stop-color="#39FF14" /> <!-- Neon Green -->
-    </linearGradient>
     <radialGradient id="tokenGradient" cx="50%" cy="50%" r="70%" fx="50%" fy="50%">
       <stop offset="0%" stop-color="#39FF14" stop-opacity="0.9" /> <!-- Neon Green Center -->
       <stop offset="70%" stop-color="#1E90FF" stop-opacity="0.95" /> <!-- Electric Blue Mid -->
@@ -23,17 +19,48 @@
   <!-- Outer ring with subtle white glow -->
   <circle cx="256" cy="256" r="210" stroke="white" stroke-width="3" stroke-opacity="0.3" fill="none" />
   
-  <!-- Inner "S" mark in white -->
-  <path d="M312 190C312 153.549 282.451 124 246 124H180C171.163 124 164 131.163 164 140C164 148.837 171.163 156 180 156H246C264.778 156 280 171.222 280 190V216H218C185.944 216 160 241.944 160 274C160 306.056 185.944 332 218 332H284C292.837 332 300 324.837 300 316C300 307.163 292.837 300 284 300H218C203.641 300 192 288.359 192 274C192 259.641 203.641 248 218 248H280C297.673 248 312 233.673 312 216V190Z" 
-        fill="white" filter="url(#glow)" />
-        
+  <!-- Cat face outline -->
+  <g filter="url(#glow)">
+    <!-- Cat head shape -->
+    <path d="M256 350c-55 0-100-45-100-100c0-55 45-100 100-100c55 0 100 45 100 100c0 55-45 100-100 100z" 
+          fill="white" fill-opacity="0.95" />
+    
+    <!-- Cat ears -->
+    <path d="M178 190l-30-50c-3-5 3-10 7-6l43 43c1 1 0 3-2 3l-10 10c-3 3-7 2-8 0z" 
+          fill="white" fill-opacity="0.95" />
+    <path d="M334 190l30-50c3-5-3-10-7-6l-43 43c-1 1 0 3 2 3l10 10c3 3 7 2 8 0z" 
+          fill="white" fill-opacity="0.95" />
+    
+    <!-- Cat eyes -->
+    <ellipse cx="210" cy="240" rx="25" ry="30" fill="#1270CD" />
+    <ellipse cx="302" cy="240" rx="25" ry="30" fill="#1270CD" />
+    
+    <!-- Cat eye pupils (vertical slits) -->
+    <ellipse cx="210" cy="240" rx="3" ry="20" fill="#39FF14" />
+    <ellipse cx="302" cy="240" rx="3" ry="20" fill="#39FF14" />
+    
+    <!-- Cat nose -->
+    <path d="M256 280l-12-12h24z" fill="#1270CD" />
+    
+    <!-- Cat mouth -->
+    <path d="M256 290c-10 0-30 5-30 15c0 8 20 10 30 10c10 0 30-2 30-10c0-10-20-15-30-15z" 
+          fill="none" stroke="#1270CD" stroke-width="2" />
+    
+    <!-- Cat whiskers -->
+    <line x1="160" y1="275" x2="220" y2="285" stroke="white" stroke-width="2" />
+    <line x1="160" y1="290" x2="220" y2="290" stroke="white" stroke-width="2" />
+    <line x1="160" y1="305" x2="220" y2="295" stroke="white" stroke-width="2" />
+    
+    <line x1="352" y1="275" x2="292" y2="285" stroke="white" stroke-width="2" />
+    <line x1="352" y1="290" x2="292" y2="290" stroke="white" stroke-width="2" />
+    <line x1="352" y1="305" x2="292" y2="295" stroke="white" stroke-width="2" />
+  </g>
+  
   <!-- Decorative elements -->
   <circle cx="256" cy="256" r="180" stroke="white" stroke-width="1" stroke-opacity="0.2" fill="none" />
   <circle cx="256" cy="256" r="150" stroke="white" stroke-width="1" stroke-opacity="0.15" fill="none" />
   
   <!-- Subtle sparkles -->
-  <circle cx="180" cy="140" r="4" fill="white" fill-opacity="0.8" />
-  <circle cx="246" cy="156" r="4" fill="white" fill-opacity="0.8" />
-  <circle cx="218" cy="248" r="4" fill="white" fill-opacity="0.8" />
-  <circle cx="284" cy="300" r="4" fill="white" fill-opacity="0.8" />
+  <circle cx="210" cy="225" r="4" fill="white" fill-opacity="0.8" />
+  <circle cx="302" cy="225" r="4" fill="white" fill-opacity="0.8" />
 </svg>
