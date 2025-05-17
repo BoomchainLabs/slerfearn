@@ -302,23 +302,50 @@ function execute_withdrawal() {
   fi
   
   echo -e "${BLUE}Executing withdrawal...${NC}"
-  WITHDRAWAL_RESULT=$(solana nonce withdraw "$NONCE_ACCOUNT" "$RECIPIENT" --authority "$AUTHORITY_PATH" 2>&1)
-  RESULT=$?
   
-  if [ $RESULT -ne 0 ]; then
-    echo -e "${RED}Withdrawal failed:${NC}"
-    echo "$WITHDRAWAL_RESULT"
-    exit 1
+  if [ "$SIMULATION_MODE" = true ]; then
+    # Simulate withdrawal in environments without Solana CLI
+    echo -e "${YELLOW}SIMULATION MODE - Simulating transaction execution${NC}"
+    
+    # Generate a random simulation delay to make it seem realistic
+    DELAY=$(( ( RANDOM % 5 ) + 1 ))
+    echo "Submitting transaction to $NETWORK..."
+    sleep $DELAY
+    
+    # Generate a simulated transaction signature
+    TX_SIGNATURE="5UYQdxnQZE9Yv7TzGsLstJzn4zhQbhg5VZbS8XLWetAFTJfUUWFNcUiUUvY16AZnGP6qdGBUuiRT3Jz81BYYRm9h"
+    
+    # Simulate confirmation
+    echo "Waiting for transaction confirmation..."
+    sleep 2
+    
+    echo -e "${GREEN}Withdrawal simulation successful!${NC}"
+    echo "Simulated Transaction Signature: $TX_SIGNATURE"
+    echo "Amount: $BALANCE"
+    
+    # Save signature to a separate file for easy access
+    echo "$TX_SIGNATURE" > "$LOG_DIR/last_signature.txt"
+    echo "SIMULATION MODE - This is a simulated transaction" >> "$LOG_DIR/last_signature.txt"
+  else
+    # Real withdrawal execution
+    WITHDRAWAL_RESULT=$(solana nonce withdraw "$NONCE_ACCOUNT" "$RECIPIENT" --authority "$AUTHORITY_PATH" 2>&1)
+    RESULT=$?
+    
+    if [ $RESULT -ne 0 ]; then
+      echo -e "${RED}Withdrawal failed:${NC}"
+      echo "$WITHDRAWAL_RESULT"
+      exit 1
+    fi
+    
+    # Extract transaction signature
+    TX_SIGNATURE=$(echo "$WITHDRAWAL_RESULT" | grep -o '[1-9A-HJ-NP-Za-km-z]\{80,\}')
+    
+    echo -e "${GREEN}Withdrawal successful!${NC}"
+    echo "Transaction Signature: $TX_SIGNATURE"
+    
+    # Save signature to a separate file for easy access
+    echo "$TX_SIGNATURE" > "$LOG_DIR/last_signature.txt"
   fi
-  
-  # Extract transaction signature
-  TX_SIGNATURE=$(echo "$WITHDRAWAL_RESULT" | grep -o '[1-9A-HJ-NP-Za-km-z]\{80,\}')
-  
-  echo -e "${GREEN}Withdrawal successful!${NC}"
-  echo "Transaction Signature: $TX_SIGNATURE"
-  
-  # Save signature to a separate file for easy access
-  echo "$TX_SIGNATURE" > "$LOG_DIR/last_signature.txt"
   
   return 0
 }
@@ -336,21 +363,44 @@ function verify_transaction() {
   fi
   
   echo -e "${BLUE}Verifying transaction...${NC}"
-  VERIFY_RESULT=$(solana confirm -v "$TX_SIGNATURE" 2>&1)
   
-  if [ $? -ne 0 ]; then
-    echo -e "${RED}Transaction verification failed:${NC}"
+  if [ "$SIMULATION_MODE" = true ]; then
+    # Simulate transaction verification
+    echo -e "${YELLOW}SIMULATION MODE - Simulating transaction verification${NC}"
+    
+    # Wait to simulate network latency
+    sleep 2
+    
+    echo -e "${GREEN}Simulated transaction verified successfully!${NC}"
+    echo "Transaction was confirmed in slot 215346789"
+    echo "Transaction executed in 2345 compute units"
+    echo "Fee: 0.000005 SOL"
+    
+    # Provide explorer links
+    echo -e "${BLUE}View transaction details online (simulation):${NC}"
+    echo "• Solana Explorer: https://explorer.solana.com/tx/$TX_SIGNATURE"
+    echo "• Solscan: https://solscan.io/tx/$TX_SIGNATURE"
+    
+    echo -e "${YELLOW}Note: This is a simulated transaction. In a real environment, these links would"
+    echo "      show the actual transaction details on the blockchain.${NC}"
+  else
+    # Real transaction verification
+    VERIFY_RESULT=$(solana confirm -v "$TX_SIGNATURE" 2>&1)
+    
+    if [ $? -ne 0 ]; then
+      echo -e "${RED}Transaction verification failed:${NC}"
+      echo "$VERIFY_RESULT"
+      return 1
+    fi
+    
+    echo -e "${GREEN}Transaction verified successfully!${NC}"
     echo "$VERIFY_RESULT"
-    return 1
+    
+    # Provide explorer links
+    echo -e "${BLUE}View transaction details online:${NC}"
+    echo "• Solana Explorer: https://explorer.solana.com/tx/$TX_SIGNATURE"
+    echo "• Solscan: https://solscan.io/tx/$TX_SIGNATURE"
   fi
-  
-  echo -e "${GREEN}Transaction verified successfully!${NC}"
-  echo "$VERIFY_RESULT"
-  
-  # Provide explorer links
-  echo -e "${BLUE}View transaction details online:${NC}"
-  echo "• Solana Explorer: https://explorer.solana.com/tx/$TX_SIGNATURE"
-  echo "• Solscan: https://solscan.io/tx/$TX_SIGNATURE"
   
   return 0
 }
