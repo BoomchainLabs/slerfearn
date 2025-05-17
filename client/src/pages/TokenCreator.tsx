@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SimpleFairLaunchCreator from '@/components/SimpleFairLaunchCreator';
+import SocialShareLaunch from '@/components/SocialShareLaunch';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle2, TrendingUp, ShieldCheck, Users, Zap } from 'lucide-react';
@@ -26,9 +27,10 @@ const TokenCreatorPage: React.FC = () => {
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         <Tabs defaultValue="fair-launch" className="w-full">
-          <TabsList className="w-full grid grid-cols-3 mb-8">
+          <TabsList className="w-full grid grid-cols-4 mb-8">
             <TabsTrigger value="fair-launch">Fair Launch</TabsTrigger>
             <TabsTrigger value="bonding-curve">Bonding Curve</TabsTrigger>
+            <TabsTrigger value="social-share">Social Share</TabsTrigger>
             <TabsTrigger value="best-practices">Best Practices</TabsTrigger>
           </TabsList>
           
@@ -43,6 +45,15 @@ const TokenCreatorPage: React.FC = () => {
                 This feature is coming soon. Use Fair Launch for now to create your $LERF token.
               </p>
             </div>
+          </TabsContent>
+          
+          <TabsContent value="social-share">
+            <SocialShareLaunch 
+              tokenName="$LERF" 
+              tokenSymbol="LERF" 
+              launchDate="May 30, 2025"
+              customMessage="Exciting news! The $LERF token is launching on May 30, 2025, headed by lead investor Sylvestre Villalba. Join us for this fair launch and be part of our growing rewards ecosystem! #LERF #TokenLaunch #SylvestreVillalba"
+            />
           </TabsContent>
           
           <TabsContent value="best-practices">
