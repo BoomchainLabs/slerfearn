@@ -1088,4 +1088,844 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+import { db } from "./db";
+import { eq, and, desc, sql, asc } from "drizzle-orm";
+
+export class DatabaseStorage implements IStorage {
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async getUserByWalletAddress(address: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.walletAddress, address));
+    return user;
+  }
+
+  async getUserByReferralCode(code: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.referralCode, code));
+    return user;
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const referralCode = generateReferralCode();
+    const [newUser] = await db
+      .insert(users)
+      .values({ ...user, referralCode })
+      .returning();
+    return newUser;
+  }
+
+  async updateUserSlerfBalance(id: number, amount: number): Promise<User> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, id));
+    
+    if (!user) {
+      throw new Error(`User with ID ${id} not found`);
+    }
+    
+    const [updatedUser] = await db
+      .update(users)
+      .set({ slerfBalance: user.slerfBalance + amount })
+      .where(eq(users.id, id))
+      .returning();
+    
+    return updatedUser;
+  }
+
+  // Daily Missions
+  async getDailyMissions(): Promise<DailyMission[]> {
+    return db.select().from(dailyMissions).where(eq(dailyMissions.active, true));
+  }
+
+  async getDailyMission(id: number): Promise<DailyMission | undefined> {
+    const [mission] = await db.select().from(dailyMissions).where(eq(dailyMissions.id, id));
+    return mission;
+  }
+
+  async createDailyMission(mission: InsertDailyMission): Promise<DailyMission> {
+    const [newMission] = await db
+      .insert(dailyMissions)
+      .values(mission)
+      .returning();
+    return newMission;
+  }
+
+  async getUserMissionProgress(userId: number): Promise<(UserMissionProgress & { mission: DailyMission })[]> {
+    const result = await db
+      .select({
+        progress: userMissionProgress,
+        mission: dailyMissions
+      })
+      .from(userMissionProgress)
+      .innerJoin(dailyMissions, eq(userMissionProgress.missionId, dailyMissions.id))
+      .where(eq(userMissionProgress.userId, userId));
+
+    return result.map(item => ({
+      ...item.progress,
+      mission: item.mission
+    }));
+  }
+
+  async updateMissionProgress(progressId: number, progress: number, completed: boolean): Promise<UserMissionProgress> {
+    const [updatedProgress] = await db
+      .update(userMissionProgress)
+      .set({ progress, completed, lastUpdated: new Date() })
+      .where(eq(userMissionProgress.id, progressId))
+      .returning();
+    
+    return updatedProgress;
+  }
+
+  async claimMissionReward(progressId: number, userId: number): Promise<{ updated: UserMissionProgress; reward: number }> {
+    // First get the progress record and mission details
+    const [progressRecord] = await db
+      .select({
+        progress: userMissionProgress,
+        mission: dailyMissions
+      })
+      .from(userMissionProgress)
+      .innerJoin(dailyMissions, eq(userMissionProgress.missionId, dailyMissions.id))
+      .where(
+        and(
+          eq(userMissionProgress.id, progressId),
+          eq(userMissionProgress.userId, userId),
+          eq(userMissionProgress.completed, true),
+          eq(userMissionProgress.claimed, false)
+        )
+      );
+
+    if (!progressRecord) {
+      throw new Error("Mission progress not found or not eligible for claiming");
+    }
+
+    // Update the progress to claimed
+    const [updated] = await db
+      .update(userMissionProgress)
+      .set({ claimed: true })
+      .where(eq(userMissionProgress.id, progressId))
+      .returning();
+
+    // Update user's SLERF balance
+    await this.updateUserSlerfBalance(userId, progressRecord.mission.reward);
+
+    return { updated, reward: progressRecord.mission.reward };
+  }
+
+  async initUserMissionProgress(progress: InsertUserMissionProgress): Promise<UserMissionProgress> {
+    const [newProgress] = await db
+      .insert(userMissionProgress)
+      .values(progress)
+      .returning();
+    
+    return newProgress;
+  }
+
+  // Weekly Quests
+  async getWeeklyQuests(): Promise<WeeklyQuest[]> {
+    return db
+      .select()
+      .from(weeklyQuests)
+      .where(
+        and(
+          eq(weeklyQuests.active, true),
+          sql`${weeklyQuests.expiresAt} > NOW()`
+        )
+      );
+  }
+
+  async getWeeklyQuest(id: number): Promise<WeeklyQuest | undefined> {
+    const [quest] = await db.select().from(weeklyQuests).where(eq(weeklyQuests.id, id));
+    return quest;
+  }
+
+  async createWeeklyQuest(quest: InsertWeeklyQuest): Promise<WeeklyQuest> {
+    const [newQuest] = await db
+      .insert(weeklyQuests)
+      .values(quest)
+      .returning();
+    return newQuest;
+  }
+
+  async getUserQuestProgress(userId: number): Promise<(UserQuestProgress & { quest: WeeklyQuest })[]> {
+    const result = await db
+      .select({
+        progress: userQuestProgress,
+        quest: weeklyQuests
+      })
+      .from(userQuestProgress)
+      .innerJoin(weeklyQuests, eq(userQuestProgress.questId, weeklyQuests.id))
+      .where(eq(userQuestProgress.userId, userId));
+
+    return result.map(item => ({
+      ...item.progress,
+      quest: item.quest
+    }));
+  }
+
+  async updateQuestProgress(progressId: number, progress: number, completed: boolean): Promise<UserQuestProgress> {
+    const [updatedProgress] = await db
+      .update(userQuestProgress)
+      .set({ progress, completed, lastUpdated: new Date() })
+      .where(eq(userQuestProgress.id, progressId))
+      .returning();
+    
+    return updatedProgress;
+  }
+
+  async claimQuestReward(progressId: number, userId: number): Promise<{ updated: UserQuestProgress; reward: number }> {
+    // First get the progress record and quest details
+    const [progressRecord] = await db
+      .select({
+        progress: userQuestProgress,
+        quest: weeklyQuests
+      })
+      .from(userQuestProgress)
+      .innerJoin(weeklyQuests, eq(userQuestProgress.questId, weeklyQuests.id))
+      .where(
+        and(
+          eq(userQuestProgress.id, progressId),
+          eq(userQuestProgress.userId, userId),
+          eq(userQuestProgress.completed, true),
+          eq(userQuestProgress.claimed, false)
+        )
+      );
+
+    if (!progressRecord) {
+      throw new Error("Quest progress not found or not eligible for claiming");
+    }
+
+    // Update the progress to claimed
+    const [updated] = await db
+      .update(userQuestProgress)
+      .set({ claimed: true })
+      .where(eq(userQuestProgress.id, progressId))
+      .returning();
+
+    // Update user's SLERF balance
+    await this.updateUserSlerfBalance(userId, progressRecord.quest.reward);
+
+    return { updated, reward: progressRecord.quest.reward };
+  }
+
+  async initUserQuestProgress(progress: InsertUserQuestProgress): Promise<UserQuestProgress> {
+    const [newProgress] = await db
+      .insert(userQuestProgress)
+      .values(progress)
+      .returning();
+    
+    return newProgress;
+  }
+
+  // Staking Vaults
+  async getStakingVaults(): Promise<StakingVault[]> {
+    return db.select().from(stakingVaults);
+  }
+
+  async getStakingVault(id: number): Promise<StakingVault | undefined> {
+    const [vault] = await db.select().from(stakingVaults).where(eq(stakingVaults.id, id));
+    return vault;
+  }
+
+  async createStakingVault(vault: InsertStakingVault): Promise<StakingVault> {
+    const [newVault] = await db
+      .insert(stakingVaults)
+      .values(vault)
+      .returning();
+    return newVault;
+  }
+
+  async getUserStakes(userId: number): Promise<(UserStake & { vault: StakingVault })[]> {
+    const result = await db
+      .select({
+        stake: userStakes,
+        vault: stakingVaults
+      })
+      .from(userStakes)
+      .innerJoin(stakingVaults, eq(userStakes.vaultId, stakingVaults.id))
+      .where(eq(userStakes.userId, userId));
+
+    return result.map(item => ({
+      ...item.stake,
+      vault: item.vault
+    }));
+  }
+
+  async stakeTokens(stake: InsertUserStake): Promise<UserStake> {
+    // Check if the user has enough SLERF balance
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, stake.userId));
+    
+    if (!user || user.slerfBalance < stake.amount) {
+      throw new Error("Insufficient SLERF balance for staking");
+    }
+
+    // Get vault to check minimum stake amount
+    const [vault] = await db
+      .select()
+      .from(stakingVaults)
+      .where(eq(stakingVaults.id, stake.vaultId));
+    
+    if (!vault) {
+      throw new Error("Staking vault not found");
+    }
+
+    if (vault.minStake !== null && stake.amount < vault.minStake) {
+      throw new Error(`Stake amount must be at least ${vault.minStake} SLERF`);
+    }
+
+    // Update user balance
+    await db
+      .update(users)
+      .set({ slerfBalance: user.slerfBalance - stake.amount })
+      .where(eq(users.id, stake.userId));
+
+    // Create stake
+    const [newStake] = await db
+      .insert(userStakes)
+      .values({
+        ...stake,
+        stakedAt: new Date(),
+        lastClaimed: new Date()
+      })
+      .returning();
+    
+    return newStake;
+  }
+
+  async unstakeTokens(stakeId: number, userId: number): Promise<{ amount: number }> {
+    // Get the stake
+    const [stake] = await db
+      .select()
+      .from(userStakes)
+      .where(
+        and(
+          eq(userStakes.id, stakeId),
+          eq(userStakes.userId, userId)
+        )
+      );
+    
+    if (!stake) {
+      throw new Error("Stake not found");
+    }
+
+    // Calculate accrued rewards
+    const now = new Date();
+    const lastClaimed = stake.lastClaimed || stake.stakedAt;
+    const hoursSinceLastClaimed = Math.max(0, (now.getTime() - lastClaimed.getTime()) / (1000 * 60 * 60));
+
+    // Get vault details for APR
+    const [vault] = await db
+      .select()
+      .from(stakingVaults)
+      .where(eq(stakingVaults.id, stake.vaultId));
+    
+    if (!vault) {
+      throw new Error("Staking vault not found");
+    }
+
+    // Calculate rewards based on APR, amount, and time (in hours)
+    // APR is stored as percentage * 100, so 7.5% is stored as 750
+    const yearlyRate = (vault.apr / 10000); // Convert to decimal
+    const hourlyRate = yearlyRate / 8760; // Hours in a year
+    const rewards = Math.floor(stake.amount * hourlyRate * hoursSinceLastClaimed);
+
+    // Update user balance with stake amount + rewards
+    await this.updateUserSlerfBalance(userId, stake.amount + rewards);
+
+    // Delete the stake
+    await db
+      .delete(userStakes)
+      .where(eq(userStakes.id, stakeId));
+
+    return { amount: stake.amount + rewards };
+  }
+
+  async claimStakingRewards(stakeId: number, userId: number): Promise<{ rewards: number }> {
+    // Get the stake
+    const [stake] = await db
+      .select()
+      .from(userStakes)
+      .where(
+        and(
+          eq(userStakes.id, stakeId),
+          eq(userStakes.userId, userId)
+        )
+      );
+    
+    if (!stake) {
+      throw new Error("Stake not found");
+    }
+
+    // Calculate accrued rewards
+    const now = new Date();
+    const lastClaimed = stake.lastClaimed || stake.stakedAt;
+    const hoursSinceLastClaimed = Math.max(0, (now.getTime() - lastClaimed.getTime()) / (1000 * 60 * 60));
+
+    // Get vault details for APR
+    const [vault] = await db
+      .select()
+      .from(stakingVaults)
+      .where(eq(stakingVaults.id, stake.vaultId));
+    
+    if (!vault) {
+      throw new Error("Staking vault not found");
+    }
+
+    // Calculate rewards based on APR, amount, and time (in hours)
+    // APR is stored as percentage * 100, so 7.5% is stored as 750
+    const yearlyRate = (vault.apr / 10000); // Convert to decimal
+    const hourlyRate = yearlyRate / 8760; // Hours in a year
+    const rewards = Math.floor(stake.amount * hourlyRate * hoursSinceLastClaimed);
+
+    if (rewards <= 0) {
+      throw new Error("No rewards available to claim yet");
+    }
+
+    // Update user balance with rewards
+    await this.updateUserSlerfBalance(userId, rewards);
+
+    // Update stake's lastClaimed time
+    await db
+      .update(userStakes)
+      .set({ 
+        lastClaimed: now,
+        rewards: (stake.rewards || 0) + rewards 
+      })
+      .where(eq(userStakes.id, stakeId));
+
+    return { rewards };
+  }
+
+  // Games
+  async getGames(): Promise<Game[]> {
+    return db
+      .select()
+      .from(games)
+      .where(eq(games.active, true));
+  }
+
+  async getGame(id: number): Promise<Game | undefined> {
+    const [game] = await db.select().from(games).where(eq(games.id, id));
+    return game;
+  }
+
+  async createGame(game: InsertGame): Promise<Game> {
+    const [newGame] = await db
+      .insert(games)
+      .values(game)
+      .returning();
+    return newGame;
+  }
+
+  async getGameLeaderboard(gameId: number, limit: number = 10): Promise<(GameScore & { user: { username: string; id: number } })[]> {
+    const result = await db
+      .select({
+        score: gameScores,
+        user: {
+          username: users.username,
+          id: users.id
+        }
+      })
+      .from(gameScores)
+      .innerJoin(users, eq(gameScores.userId, users.id))
+      .where(eq(gameScores.gameId, gameId))
+      .orderBy(desc(gameScores.score))
+      .limit(limit);
+
+    return result.map(item => ({
+      ...item.score,
+      user: item.user
+    }));
+  }
+
+  async getUserGameScores(userId: number): Promise<(GameScore & { game: Game })[]> {
+    const result = await db
+      .select({
+        score: gameScores,
+        game: games
+      })
+      .from(gameScores)
+      .innerJoin(games, eq(gameScores.gameId, games.id))
+      .where(eq(gameScores.userId, userId))
+      .orderBy([asc(gameScores.gameId), desc(gameScores.score)]);
+
+    return result.map(item => ({
+      ...item.score,
+      game: item.game
+    }));
+  }
+
+  async submitGameScore(score: InsertGameScore): Promise<GameScore> {
+    // Check if the game exists and is active
+    const [game] = await db
+      .select()
+      .from(games)
+      .where(
+        and(
+          eq(games.id, score.gameId),
+          eq(games.active, true)
+        )
+      );
+    
+    if (!game) {
+      throw new Error("Game not found or inactive");
+    }
+
+    // Create the score entry
+    const [newScore] = await db
+      .insert(gameScores)
+      .values({
+        ...score,
+        playedAt: new Date()
+      })
+      .returning();
+    
+    // Check if this is a new high score, and reward tokens if it is
+    const [highScore] = await db
+      .select()
+      .from(gameScores)
+      .where(
+        and(
+          eq(gameScores.userId, score.userId),
+          eq(gameScores.gameId, score.gameId)
+        )
+      )
+      .orderBy(desc(gameScores.score))
+      .limit(1);
+
+    if (highScore && highScore.id === newScore.id) {
+      // This is a new high score, reward the user
+      await this.updateUserSlerfBalance(score.userId, game.reward);
+    }
+    
+    return newScore;
+  }
+
+  // NFT Boosters
+  async getNftBoosters(): Promise<NftBooster[]> {
+    return db.select().from(nftBoosters);
+  }
+
+  async getNftBooster(id: number): Promise<NftBooster | undefined> {
+    const [nft] = await db.select().from(nftBoosters).where(eq(nftBoosters.id, id));
+    return nft;
+  }
+
+  async createNftBooster(nft: InsertNftBooster): Promise<NftBooster> {
+    const [newNft] = await db
+      .insert(nftBoosters)
+      .values(nft)
+      .returning();
+    return newNft;
+  }
+
+  async getUserNfts(userId: number): Promise<(UserNft & { nft: NftBooster })[]> {
+    const result = await db
+      .select({
+        userNft: userNfts,
+        nft: nftBoosters
+      })
+      .from(userNfts)
+      .innerJoin(nftBoosters, eq(userNfts.nftId, nftBoosters.id))
+      .where(eq(userNfts.userId, userId));
+
+    return result.map(item => ({
+      ...item.userNft,
+      nft: item.nft
+    }));
+  }
+
+  async mintNft(userNft: InsertUserNft): Promise<UserNft> {
+    // Get NFT details to check the price
+    const [nft] = await db
+      .select()
+      .from(nftBoosters)
+      .where(eq(nftBoosters.id, userNft.nftId));
+    
+    if (!nft) {
+      throw new Error("NFT not found");
+    }
+
+    // Check if the user has enough SLERF balance
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userNft.userId));
+    
+    if (!user || user.slerfBalance < nft.price) {
+      throw new Error("Insufficient SLERF balance to mint NFT");
+    }
+
+    // Update user balance
+    await db
+      .update(users)
+      .set({ slerfBalance: user.slerfBalance - nft.price })
+      .where(eq(users.id, userNft.userId));
+
+    // Create the user NFT
+    const [newUserNft] = await db
+      .insert(userNfts)
+      .values({
+        ...userNft,
+        mintedAt: new Date()
+      })
+      .returning();
+    
+    return newUserNft;
+  }
+
+  // Marketplace
+  async getMarketplaceItems(): Promise<MarketplaceItem[]> {
+    return db
+      .select()
+      .from(marketplaceItems)
+      .where(eq(marketplaceItems.available, true));
+  }
+
+  async getMarketplaceItem(id: number): Promise<MarketplaceItem | undefined> {
+    const [item] = await db
+      .select()
+      .from(marketplaceItems)
+      .where(eq(marketplaceItems.id, id));
+    return item;
+  }
+
+  async createMarketplaceItem(item: InsertMarketplaceItem): Promise<MarketplaceItem> {
+    const [newItem] = await db
+      .insert(marketplaceItems)
+      .values(item)
+      .returning();
+    return newItem;
+  }
+
+  async getUserPurchases(userId: number): Promise<(UserPurchase & { item: MarketplaceItem })[]> {
+    const result = await db
+      .select({
+        purchase: userPurchases,
+        item: marketplaceItems
+      })
+      .from(userPurchases)
+      .innerJoin(marketplaceItems, eq(userPurchases.itemId, marketplaceItems.id))
+      .where(eq(userPurchases.userId, userId));
+
+    return result.map(item => ({
+      ...item.purchase,
+      item: item.item
+    }));
+  }
+
+  async purchaseItem(purchase: InsertUserPurchase): Promise<UserPurchase> {
+    // Get item details to check the price
+    const [item] = await db
+      .select()
+      .from(marketplaceItems)
+      .where(
+        and(
+          eq(marketplaceItems.id, purchase.itemId),
+          eq(marketplaceItems.available, true)
+        )
+      );
+    
+    if (!item) {
+      throw new Error("Item not found or not available");
+    }
+
+    // Check if the user has enough SLERF balance
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, purchase.userId));
+    
+    if (!user || user.slerfBalance < item.price) {
+      throw new Error("Insufficient SLERF balance to purchase item");
+    }
+
+    // Update user balance
+    await db
+      .update(users)
+      .set({ slerfBalance: user.slerfBalance - item.price })
+      .where(eq(users.id, purchase.userId));
+
+    // Create the purchase
+    const [newPurchase] = await db
+      .insert(userPurchases)
+      .values({
+        ...purchase,
+        purchasedAt: new Date()
+      })
+      .returning();
+    
+    return newPurchase;
+  }
+
+  // Social Connections
+  async getSocialConnections(userId: number): Promise<SocialConnection[]> {
+    return db
+      .select()
+      .from(socialConnections)
+      .where(eq(socialConnections.userId, userId));
+  }
+
+  async connectSocial(connection: InsertSocialConnection): Promise<SocialConnection> {
+    // Check if a connection for this platform already exists
+    const existingConnections = await db
+      .select()
+      .from(socialConnections)
+      .where(
+        and(
+          eq(socialConnections.userId, connection.userId),
+          eq(socialConnections.platform, connection.platform)
+        )
+      );
+    
+    if (existingConnections.length > 0) {
+      // Update existing connection
+      const [updatedConnection] = await db
+        .update(socialConnections)
+        .set({ 
+          username: connection.username,
+          connected: true,
+          connectedAt: new Date()
+        })
+        .where(eq(socialConnections.id, existingConnections[0].id))
+        .returning();
+      
+      return updatedConnection;
+    }
+
+    // Create new connection
+    const [newConnection] = await db
+      .insert(socialConnections)
+      .values({
+        ...connection,
+        connected: true,
+        connectedAt: new Date()
+      })
+      .returning();
+    
+    return newConnection;
+  }
+
+  async disconnectSocial(connectionId: number, userId: number): Promise<boolean> {
+    const result = await db
+      .update(socialConnections)
+      .set({ connected: false })
+      .where(
+        and(
+          eq(socialConnections.id, connectionId),
+          eq(socialConnections.userId, userId)
+        )
+      );
+    
+    return result.rowCount > 0;
+  }
+
+  // Statistics
+  async getStats(): Promise<{ totalUsers: number; slerfDistributed: number; activeQuests: number; averageApr: number; }> {
+    // Total users
+    const [usersCount] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(users);
+    
+    // Total SLERF distributed (sum of all user balances)
+    const [slerfTotal] = await db
+      .select({ 
+        sum: sql<number>`COALESCE(sum(slerf_balance), 0)` 
+      })
+      .from(users);
+    
+    // Active quests/missions
+    const [questsCount] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(weeklyQuests)
+      .where(
+        and(
+          eq(weeklyQuests.active, true),
+          sql`${weeklyQuests.expiresAt} > NOW()`
+        )
+      );
+    
+    // Average APR
+    const [aprAvg] = await db
+      .select({ 
+        avg: sql<number>`COALESCE(avg(apr), 0)` 
+      })
+      .from(stakingVaults);
+    
+    return {
+      totalUsers: usersCount.count || 0,
+      slerfDistributed: slerfTotal.sum || 0,
+      activeQuests: questsCount.count || 0,
+      averageApr: Math.round((aprAvg.avg || 0) / 100) / 10, // Convert to percentage with 1 decimal
+    };
+  }
+  
+  // Referrals
+  async getReferralLeaderboard(limit: number = 5): Promise<{ id: number; username: string; referrals: number; earned: number; }[]> {
+    // For each referrer, count how many users have them as referredBy
+    const result = await db
+      .select({
+        id: users.id,
+        username: users.username,
+        referrals: sql<number>`COUNT(r.id)`,
+        // Approximate earnings based on referred users' balances and a 5% commission
+        earned: sql<number>`COALESCE(FLOOR(SUM(r.slerf_balance) * 0.05), 0)`,
+      })
+      .from(users)
+      .leftJoin(users, eq(users.id, users.as("r").referredBy))
+      .groupBy(users.id, users.username)
+      .orderBy(desc(sql<number>`COUNT(r.id)`))
+      .limit(limit);
+    
+    return result;
+  }
+
+  async getReferrals(userId: number): Promise<{ referrals: number; earned: number; tier: string; }> {
+    // Count referrals
+    const [referralsCount] = await db
+      .select({
+        count: sql<number>`count(*)`,
+        // Approximate earnings based on referred users' balances and commissions ranging from 5-15%
+        earned: sql<number>`COALESCE(FLOOR(SUM(slerf_balance) * 
+          CASE 
+            WHEN COUNT(*) >= 50 THEN 0.15 
+            WHEN COUNT(*) >= 20 THEN 0.10 
+            WHEN COUNT(*) >= 5 THEN 0.075 
+            ELSE 0.05 
+          END), 0)`,
+      })
+      .from(users)
+      .where(eq(users.referredBy, userId));
+    
+    const count = referralsCount.count || 0;
+    let tier = "Bronze";
+    
+    if (count >= 50) {
+      tier = "Diamond";
+    } else if (count >= 20) {
+      tier = "Gold";
+    } else if (count >= 5) {
+      tier = "Silver";
+    }
+    
+    return {
+      referrals: count,
+      earned: referralsCount.earned || 0,
+      tier
+    };
+  }
+}
+
+// Use the DatabaseStorage for persistence
+export const storage = new DatabaseStorage();
