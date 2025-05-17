@@ -10,6 +10,7 @@ import NFTBoosters from '@/components/NFTBoosters';
 import ReferralSystem from '@/components/ReferralSystem';
 import SocialFiIntegration from '@/components/SocialFiIntegration';
 import MarketplacePreview from '@/components/MarketplacePreview';
+import TokenPriceChart from '@/components/TokenPriceChart';
 import Footer from '@/components/Footer';
 import WalletModal from '@/components/WalletModal';
 import { useState } from 'react';
@@ -44,6 +45,14 @@ const Home: React.FC = () => {
       <Navbar onWalletClick={handleWalletConnect} />
       <Hero onStartClick={handleWalletConnect} />
       <StatsBar />
+      
+      {/* Add Token Price Chart */}
+      <section className="py-12 px-4 bg-gradient-to-b from-slerf-dark to-slerf-dark/90">
+        <div className="container mx-auto">
+          <h2 className="text-3xl font-space font-bold mb-6">SLERF Token Live Chart</h2>
+          <TokenPriceChart />
+        </div>
+      </section>
       <DailyMissions />
       <WeeklyQuests />
       <StakingVaults />

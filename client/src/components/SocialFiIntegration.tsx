@@ -178,7 +178,7 @@ const SocialFiIntegration: React.FC = () => {
               <div className="flex items-center justify-between p-3 bg-slerf-dark/50 rounded-lg">
                 <div className="flex items-center">
                   <i className="ri-user-follow-line mr-3 text-gray-400"></i>
-                  <span>Follow official account</span>
+                  <span>Follow @slerf00</span>
                 </div>
                 <span className="font-mono text-sm text-slerf-orange">+10 $SLERF</span>
               </div>

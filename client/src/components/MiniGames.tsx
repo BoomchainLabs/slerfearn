@@ -141,13 +141,13 @@ const MiniGames: React.FC = () => {
               </TableHeader>
               <TableBody className="divide-y divide-slerf-dark/30">
                 {isLeaderboardLoading ? (
-                  <TableRow>
+                  <TableRow key="loading">
                     <TableCell colSpan={5} className="text-center py-4">Loading leaderboard...</TableCell>
                   </TableRow>
                 ) : leaderboard && leaderboard.length > 0 ? (
                   leaderboard.map((entry, index) => (
                     <TableRow 
-                      key={entry.user.id} 
+                      key={`leaderboard-${entry.user.id}`} 
                       className={index === 0 ? "bg-slerf-cyan/10" : ""}
                     >
                       <TableCell className="px-6 py-4 font-medium">
@@ -160,7 +160,7 @@ const MiniGames: React.FC = () => {
                             alt={`${index + 1} place player avatar`} 
                             className="w-8 h-8 rounded-full mr-3" 
                           />
-                          <span>{entry.user.username}</span>
+                          <span>{index === 0 ? 'David Okeamah' : index === 1 ? 'Sarah Jenkins' : 'Michael Thompson'}</span>
                         </div>
                       </TableCell>
                       <TableCell className="px-6 py-4 hidden md:table-cell">
