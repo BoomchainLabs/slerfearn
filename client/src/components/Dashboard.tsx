@@ -648,6 +648,11 @@ const Dashboard: React.FC = () => {
           </div>
         </TabsContent>
         
+        {/* Dependency Dashboard Tab */}
+        <TabsContent value="dependency">
+          <DependencyDashboard />
+        </TabsContent>
+        
         {/* Liquidity Tab */}
         <TabsContent value="liquidity">
           <CrossChainLiquidity />
