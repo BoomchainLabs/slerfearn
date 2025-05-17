@@ -31,8 +31,8 @@ interface GitBookPage {
 }
 
 const GitBookDocs: React.FC<GitBookDocsProps> = ({
-  space = 'lerf-hub',
-  defaultPage = 'token',
+  space = '0d5fcb106c-hosting',
+  defaultPage = '',
   title = '$LERF Documentation',
   description = 'Official documentation for the $LERF token ecosystem'
 }) => {
