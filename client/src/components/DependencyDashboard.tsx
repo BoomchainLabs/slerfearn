@@ -32,10 +32,24 @@ const dependencyData: Dependency[] = [
     links: [
       { to: 'eth', strength: 9, type: 'depends-on' },
       { to: 'sol', strength: 7, type: 'depends-on' },
+      { to: 'go-sdk', strength: 8, type: 'provides-for' },
       { to: 'missions', strength: 8, type: 'provides-for' },
       { to: 'quests', strength: 8, type: 'provides-for' },
       { to: 'staking', strength: 9, type: 'provides-for' },
       { to: 'nft', strength: 6, type: 'provides-for' }
+    ]
+  },
+  {
+    id: 'go-sdk',
+    name: 'Go SDK',
+    category: 'service',
+    status: 'active',
+    description: 'Official Go language SDK for $LERF token integration',
+    importance: 8,
+    links: [
+      { to: 'eth', strength: 7, type: 'depends-on' },
+      { to: 'sol', strength: 7, type: 'depends-on' },
+      { to: 'github', strength: 8, type: 'partners-with' }
     ]
   },
   {
@@ -638,6 +652,32 @@ const DependencyDashboard: React.FC = () => {
                           <p>The $LERF ecosystem has strong dependencies on both Ethereum and Solana platforms. 
                           The primary risk factor is the high centrality of the reward system which depends
                           heavily on the $LERF token liquidity.</p>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-medium mb-2">Go SDK Integration</h4>
+                        <div className="text-sm bg-slerf-dark rounded-lg p-3 border border-slerf-dark-lighter">
+                          <div className="font-medium mb-2 text-slerf-cyan">Compatible Go Versions</div>
+                          <div className="grid grid-cols-2 gap-2 mb-3">
+                            <div className="flex items-center">
+                              <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+                              <span>Go 1.24.3 (Latest)</span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+                              <span>Go 1.24.2</span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></div>
+                              <span>Go 1.23.x</span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
+                              <span>Go ≤ 1.22.x</span>
+                            </div>
+                          </div>
+                          <div className="text-xs text-gray-400">The $LERF Go SDK provides native bindings for blockchain interaction, token transfers, and staking operations.</div>
                         </div>
                       </div>
                       
