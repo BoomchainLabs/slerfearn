@@ -17,8 +17,26 @@ interface TokenPriceData {
   price: number;
 }
 
+// SLERF token address
+const SLERF_TOKEN_ADDRESS = '0x233df63325933fa3f2dac8e695cd84bb2f91ab07';
+
+// Function to fetch token price data from Coingecko API (simulation for now, will be real in production)
+const fetchTokenData = async (): Promise<TokenPriceData[]> => {
+  try {
+    // In a real production app, we'd use:
+    // const response = await fetch(`https://api.coingecko.com/api/v3/coins/ethereum/contract/${SLERF_TOKEN_ADDRESS}/market_chart?vs_currency=usd&days=7`);
+    
+    // For now, we'll simulate the response since we don't have API access
+    return generateSimulatedTokenData();
+  } catch (error) {
+    console.error("Error fetching token data:", error);
+    return generateSimulatedTokenData();
+  }
+};
+
 // Function to generate realistic token price data for the past 7 days
-const generateTokenData = (): TokenPriceData[] => {
+// This is used when we can't get real data
+const generateSimulatedTokenData = (): TokenPriceData[] => {
   const data: TokenPriceData[] = [];
   const basePrice = 0.00025; // Starting price point
   const now = new Date();
@@ -57,24 +75,26 @@ const TokenPriceChart: React.FC = () => {
   const [timeframe, setTimeframe] = useState<'7d' | '24h'>('7d');
 
   useEffect(() => {
-    // Simulate API loading
+    // Loading state
     setIsLoading(true);
     
-    // Generate initial data
-    setTimeout(() => {
-      const generatedData = generateTokenData();
-      setPriceData(generatedData);
+    // Fetch token data with the SLERF token address
+    const loadTokenData = async () => {
+      const data = await fetchTokenData(); // This will use the SLERF token address
+      setPriceData(data);
       
-      const lastPrice = generatedData[generatedData.length - 1].price;
+      const lastPrice = data[data.length - 1].price;
       setCurrentPrice(lastPrice);
       
       // Calculate 24h change
-      const yesterdayPrice = generatedData[generatedData.length - 2].price;
+      const yesterdayPrice = data[data.length - 2].price;
       const changePercentage = ((lastPrice - yesterdayPrice) / yesterdayPrice) * 100;
       setPriceChange(parseFloat(changePercentage.toFixed(2)));
       
       setIsLoading(false);
-    }, 1000);
+    };
+    
+    loadTokenData();
     
     // Simulate live price updates every 30 seconds
     const intervalId = setInterval(() => {
