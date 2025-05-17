@@ -469,7 +469,7 @@ const TokenVisualization: React.FC = () => {
                 
                 return (
                   <line
-                    key={`line-${index}`}
+                    key={`line-${tx.id}-${index}`}
                     x1={`${fromNode.x}%`}
                     y1={`${fromNode.y}%`}
                     x2={`${toNode.x}%`}

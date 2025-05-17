@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import StatsBar from '@/components/StatsBar';
+import UserStats from '@/components/UserStats';
 import DailyMissions from '@/components/DailyMissions';
 import WeeklyQuests from '@/components/WeeklyQuests';
 import StakingVaults from '@/components/StakingVaults';
