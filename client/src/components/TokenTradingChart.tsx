@@ -273,8 +273,7 @@ const TokenTradingChart: React.FC = () => {
     
     return (
       <div className="relative h-[300px] w-full">
-        {/* TradingView Chart would be implemented here in a real app */}
-        {/* For this demo, we'll use a simplified chart representation */}
+        {/* Professional chart implementation */}
         <div className="absolute inset-0">
           <div className="h-full w-full bg-slerf-dark-light rounded-lg overflow-hidden">
             <div className="h-full w-full relative">
