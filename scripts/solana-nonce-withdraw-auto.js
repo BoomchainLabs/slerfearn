@@ -10,9 +10,22 @@
  * node solana-nonce-withdraw-auto.js --nonce <nonce-account> --recipient <recipient-address> --authority <path-to-keypair> --network <network>
  */
 
-const { exec } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { exec as execCallback } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Get dirname equivalent in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Promisify exec
+const exec = (command) => new Promise((resolve, reject) => {
+  execCallback(command, (error, stdout, stderr) => {
+    if (error) reject(error);
+    else resolve({ stdout, stderr });
+  });
+});
 
 // Configuration from command line args
 const parseArgs = () => {
@@ -97,26 +110,23 @@ Example:
 };
 
 // Helper function to execute shell commands
-const executeCommand = (command, config) => {
-  return new Promise((resolve, reject) => {
+const executeCommand = async (command, config) => {
+  try {
     if (config.verbose) {
       console.log(`Executing: ${command}`);
     }
     
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error: ${error.message}`);
-        reject(error);
-        return;
-      }
-      
-      if (stderr && config.verbose) {
-        console.warn(`Warning: ${stderr}`);
-      }
-      
-      resolve(stdout);
-    });
-  });
+    const { stdout, stderr } = await exec(command);
+    
+    if (stderr && config.verbose) {
+      console.warn(`Warning: ${stderr}`);
+    }
+    
+    return stdout;
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
+    throw error;
+  }
 };
 
 // Check if Solana CLI is installed
