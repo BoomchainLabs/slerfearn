@@ -1,0 +1,194 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Space+Grotesk:wght@500;700&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css');
+
+:root {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 24 100% 58%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 240 4.9% 83.9%;
+  --radius: 0.5rem;
+
+  /* Custom Slerf colors */
+  --slerf-orange: 24 100% 58%;
+  --slerf-purple: 270 64% 55%;
+  --slerf-cyan: 187 100% 50%;
+  --slerf-dark: 240 10% 8%;
+  --slerf-light: 210 20% 98%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter;
+  }
+}
+
+.glass {
+  @apply bg-white/[0.03] backdrop-blur-xl border border-white/[0.05];
+}
+
+.mission-card:hover,
+.quest-card:hover,
+.game-card:hover {
+  transform: translateY(-5px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mission-card:hover {
+  box-shadow: 0 10px 25px rgba(255, 107, 42, 0.2);
+}
+
+.quest-card:hover {
+  box-shadow: 0 10px 25px rgba(155, 81, 224, 0.2);
+}
+
+.game-card:hover {
+  box-shadow: 0 10px 25px rgba(1, 210, 255, 0.2);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.font-space {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.shadow-glow {
+  box-shadow: 0 0 15px rgba(255, 107, 42, 0.5);
+}
+
+.shadow-glass {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.bg-slerf-orange {
+  background-color: rgb(255, 107, 42);
+}
+
+.text-slerf-orange {
+  color: rgb(255, 107, 42);
+}
+
+.bg-slerf-purple {
+  background-color: rgb(155, 81, 224);
+}
+
+.text-slerf-purple {
+  color: rgb(155, 81, 224);
+}
+
+.bg-slerf-cyan {
+  background-color: rgb(1, 210, 255);
+}
+
+.text-slerf-cyan {
+  color: rgb(1, 210, 255);
+}
+
+.bg-slerf-dark {
+  background-color: rgb(18, 18, 24);
+}
+
+.text-slerf-light {
+  color: rgb(248, 249, 250);
+}
+
+.border-slerf-orange {
+  border-color: rgb(255, 107, 42);
+}
+
+.border-slerf-purple {
+  border-color: rgb(155, 81, 224);
+}
+
+.border-slerf-cyan {
+  border-color: rgb(1, 210, 255);
+}
+
+.hover\:bg-slerf-orange:hover {
+  background-color: rgb(255, 107, 42);
+}
+
+.hover\:bg-slerf-orange\/90:hover {
+  background-color: rgba(255, 107, 42, 0.9);
+}
+
+.hover\:bg-slerf-purple:hover {
+  background-color: rgb(155, 81, 224);
+}
+
+.hover\:bg-slerf-purple\/90:hover {
+  background-color: rgba(155, 81, 224, 0.9);
+}
+
+.hover\:bg-slerf-cyan:hover {
+  background-color: rgb(1, 210, 255);
+}
+
+.hover\:bg-slerf-cyan\/90:hover {
+  background-color: rgba(1, 210, 255, 0.9);
+}
+
+.hover\:text-slerf-orange:hover {
+  color: rgb(255, 107, 42);
+}
+
+.hover\:border-slerf-orange:hover {
+  border-color: rgb(255, 107, 42);
+}
+
+.hover\:bg-slerf-orange\/10:hover {
+  background-color: rgba(255, 107, 42, 0.1);
+}
+
+.hover\:border-slerf-purple:hover {
+  border-color: rgb(155, 81, 224);
+}
+
+.hover\:bg-slerf-purple\/10:hover {
+  background-color: rgba(155, 81, 224, 0.1);
+}
+
+.hover\:border-slerf-cyan:hover {
+  border-color: rgb(1, 210, 255);
+}
+
+.hover\:bg-slerf-cyan\/10:hover {
+  background-color: rgba(1, 210, 255, 0.1);
+}
