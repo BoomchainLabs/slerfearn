@@ -7,7 +7,7 @@ import Home from "@/pages/Home";
 import Games from "@/pages/Games";
 import Documentation from "@/pages/Documentation";
 import NotFound from "@/pages/not-found";
-import { WalletProvider } from "./hooks/useWallet";
+import { WalletProvider } from "./hooks/useWallet.tsx";
 
 function Router() {
   return (
