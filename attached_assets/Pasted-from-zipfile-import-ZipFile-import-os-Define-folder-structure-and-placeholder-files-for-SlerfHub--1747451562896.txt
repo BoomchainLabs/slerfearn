@@ -1,0 +1,87 @@
+from zipfile import ZipFile
+import os
+
+# Define folder structure and placeholder files for SlerfHub
+base_dir = "/mnt/data/SlerfHub"
+folders = [
+    "frontend/components",
+    "frontend/pages",
+    "frontend/public",
+    "frontend/styles",
+    "contracts",
+    "backend/routes",
+    "backend/controllers"
+]
+
+files = {
+    "frontend/pages/index.js": """\
+import Head from 'next/head';
+
+export default function Home() {
+  return (
+    <div>
+      <Head>
+        <title>SlerfHub</title>
+      </Head>
+      <main>
+        <h1>Welcome to SlerfHub</h1>
+        <p>Earn $SLERF by completing quests and challenges!</p>
+      </main>
+    </div>
+  );
+}
+""",
+    "frontend/package.json": """\
+{
+  "name": "slerfhub",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^13.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "wagmi": "^1.1.2",
+    "viem": "^1.2.0"
+  }
+}
+""",
+    "contracts/SlerfToken.sol": """\
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
+contract SlerfToken is ERC20 {
+    constructor() ERC20("Slerf Token", "SLERF") {
+        _mint(msg.sender, 1000000 * 10 ** decimals());
+    }
+}
+""",
+    "backend/routes/index.js": "// Placeholder for backend routes\n",
+    "backend/controllers/rewardController.js": "// Logic for reward handling\n"
+}
+
+# Create directories
+for folder in folders:
+    os.makedirs(os.path.join(base_dir, folder), exist_ok=True)
+
+# Create files
+for path, content in files.items():
+    full_path = os.path.join(base_dir, path)
+    with open(full_path, "w") as f:
+        f.write(content)
+
+# Zip the directory
+zip_path = "/mnt/data/SlerfHub.zip"
+with ZipFile(zip_path, 'w') as zipf:
+    for root, _, files in os.walk(base_dir):
+        for file in files:
+            file_path = os.path.join(root, file)
+            arcname = os.path.relpath(file_path, base_dir)
+            zipf.write(file_path, arcname)
+
+zip_path
