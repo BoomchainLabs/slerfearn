@@ -38,52 +38,40 @@ const prompt = (question, defaultValue) => {
 // Helper function to execute shell commands
 const executeCommand = (command) => {
   return new Promise((resolve, reject) => {
-    if (Array.isArray(command)) {
-      // Safe execution with array of arguments
-      const cmd = command[0];
-      const args = command.slice(1);
-      console.log(`Executing: ${cmd} ${args.join(' ')}`);
-      
-      const childProcess = require('child_process').spawn(cmd, args);
-      let stdout = '';
-      let stderr = '';
-      
-      childProcess.stdout.on('data', (data) => {
-        stdout += data.toString();
-      });
-      
-      childProcess.stderr.on('data', (data) => {
-        stderr += data.toString();
-      });
-      
-      childProcess.on('close', (code) => {
-        if (code !== 0) {
-          console.error(`Error: Process exited with code ${code}`);
-          console.warn(`Warning: ${stderr}`);
-          reject(new Error(stderr || `Process exited with code ${code}`));
-          return;
-        }
-        if (stderr) {
-          console.warn(`Warning: ${stderr}`);
-        }
-        resolve(stdout);
-      });
-    } else {
-      // Legacy string command execution with warning
-      console.warn('Warning: Using string command execution is deprecated and may be unsafe');
-      console.log(`Executing: ${command}`);
-      exec(command, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Error: ${error.message}`);
-          reject(error);
-          return;
-        }
-        if (stderr) {
-          console.warn(`Warning: ${stderr}`);
-        }
-        resolve(stdout);
-      });
+    if (!Array.isArray(command)) {
+      reject(new Error('Command must be an array for security reasons'));
+      return;
     }
+    
+    // Safe execution with array of arguments
+    const cmd = command[0];
+    const args = command.slice(1);
+    console.log(`Executing: ${cmd} ${args.join(' ')}`);
+    
+    const childProcess = require('child_process').spawn(cmd, args);
+    let stdout = '';
+    let stderr = '';
+    
+    childProcess.stdout.on('data', (data) => {
+      stdout += data.toString();
+    });
+    
+    childProcess.stderr.on('data', (data) => {
+      stderr += data.toString();
+    });
+    
+    childProcess.on('close', (code) => {
+      if (code !== 0) {
+        console.error(`Error: Process exited with code ${code}`);
+        console.warn(`Warning: ${stderr}`);
+        reject(new Error(stderr || `Process exited with code ${code}`));
+        return;
+      }
+      if (stderr) {
+        console.warn(`Warning: ${stderr}`);
+      }
+      resolve(stdout);
+    });
   });
 };
 
