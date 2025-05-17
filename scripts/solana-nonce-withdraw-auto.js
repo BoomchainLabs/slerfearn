@@ -10,7 +10,7 @@
  * node solana-nonce-withdraw-auto.js --nonce <nonce-account> --recipient <recipient-address> --authority <path-to-keypair> --network <network>
  */
 
-import { exec as execCallback } from 'child_process';
+import { exec as execCallback, execFile } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -19,7 +19,15 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Promisify exec
+// Promisify execFile for more secure command execution
+const execFilePromise = (command, args) => new Promise((resolve, reject) => {
+  execFile(command, args, (error, stdout, stderr) => {
+    if (error) reject(error);
+    else resolve({ stdout, stderr });
+  });
+});
+
+// For backward compatibility and commands that don't need argument separation
 const exec = (command) => new Promise((resolve, reject) => {
   execCallback(command, (error, stdout, stderr) => {
     if (error) reject(error);
@@ -109,20 +117,45 @@ Example:
   `);
 };
 
-// Helper function to execute shell commands
-const executeCommand = async (command, config) => {
+// Helper function to execute shell commands securely
+const executeCommand = async (commandWithArgs, config) => {
   try {
-    if (config.verbose) {
-      console.log(`Executing: ${command}`);
+    // Parse the command into command and arguments to use execFile
+    let command, args;
+    
+    if (typeof commandWithArgs === 'string') {
+      const parts = commandWithArgs.split(' ');
+      command = parts[0];
+      args = parts.slice(1);
+      
+      if (config.verbose) {
+        console.log(`Executing: ${command} ${args.join(' ')}`);
+      }
+      
+      const { stdout, stderr } = await execFilePromise(command, args);
+      
+      if (stderr && config.verbose) {
+        console.warn(`Warning: ${stderr}`);
+      }
+      
+      return stdout;
+    } else if (Array.isArray(commandWithArgs)) {
+      // If already provided as [command, ...args]
+      command = commandWithArgs[0];
+      args = commandWithArgs.slice(1);
+      
+      if (config.verbose) {
+        console.log(`Executing: ${command} ${args.join(' ')}`);
+      }
+      
+      const { stdout, stderr } = await execFilePromise(command, args);
+      
+      if (stderr && config.verbose) {
+        console.warn(`Warning: ${stderr}`);
+      }
+      
+      return stdout;
     }
-    
-    const { stdout, stderr } = await exec(command);
-    
-    if (stderr && config.verbose) {
-      console.warn(`Warning: ${stderr}`);
-    }
-    
-    return stdout;
   } catch (error) {
     console.error(`Error: ${error.message}`);
     throw error;
@@ -272,10 +305,19 @@ const verifyRecipientAddress = async (address, config) => {
 // Perform the nonce withdrawal
 const performNonceWithdrawal = async (nonceAccount, recipientAddress, authorityPath, config) => {
   try {
-    const output = await executeCommand(
-      `solana nonce withdraw ${nonceAccount} ${recipientAddress} --authority ${authorityPath} --json`,
-      config
-    );
+    // Use array of arguments to prevent command injection
+    const args = [
+      'solana',
+      'nonce',
+      'withdraw',
+      nonceAccount,
+      recipientAddress,
+      '--authority',
+      authorityPath,
+      '--json'
+    ];
+    
+    const output = await executeCommand(args, config);
     
     try {
       const result = JSON.parse(output);
