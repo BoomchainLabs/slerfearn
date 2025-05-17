@@ -9,6 +9,7 @@ import GitHubConnect from '@/components/GitHubConnect';
 import TokenTradingChart from '@/components/TokenTradingChart';
 import TokenVisualization from '@/components/TokenVisualization';
 import CrossChainLiquidity from '@/components/CrossChainLiquidity';
+import DependencyDashboard from '@/components/DependencyDashboard';
 import { useWallet } from '@/hooks/useWallet';
 import slerfLogo from '@/assets/slerf-logo.svg';
 
@@ -336,10 +337,11 @@ const Dashboard: React.FC = () => {
       
       {/* Main Dashboard Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="glass p-8 rounded-xl">
-        <TabsList className="grid grid-cols-4 md:grid-cols-5 w-full mb-8 p-1.5">
+        <TabsList className="grid grid-cols-3 md:grid-cols-6 w-full mb-8 p-1.5">
           <TabsTrigger value="overview" className="px-5 py-3 text-base">Overview</TabsTrigger>
           <TabsTrigger value="trading" className="px-5 py-3 text-base">Trading</TabsTrigger>
           <TabsTrigger value="network" className="px-5 py-3 text-base">Network</TabsTrigger>
+          <TabsTrigger value="dependency" className="px-5 py-3 text-base">Dependency</TabsTrigger>
           <TabsTrigger value="liquidity" className="px-5 py-3 text-base">Liquidity</TabsTrigger>
           <TabsTrigger value="social" className="hidden md:flex px-5 py-3 text-base">Social</TabsTrigger>
         </TabsList>
