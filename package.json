@@ -11,6 +11,7 @@
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
+    "@gitbook/cli": "^0.23.0",
     "@gofundmeme/sdk": "^1.1.2",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
