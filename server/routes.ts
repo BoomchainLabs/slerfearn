@@ -568,6 +568,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(stats);
   });
 
+  // GitBook Documentation API
+  router.get('/gitbook', handleGitBookRequest);
+
   // Referral routes
   router.get('/referrals/leaderboard', async (req: Request, res: Response) => {
     const { limit } = req.query;
