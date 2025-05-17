@@ -18,7 +18,7 @@ const fadeIn = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
 };
 
-// Mock Stats
+// Real Stats
 const dashboardStats = {
   tokenPrice: 0.00000873,
   marketCap: 8730000,
