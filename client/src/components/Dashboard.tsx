@@ -35,11 +35,11 @@ const dashboardStats = {
 
 // Top holders
 const topHolders = [
-  { rank: 1, address: '0x7a25E...3A8b', amount: 12500000, percentage: 12.5, change: 2.3 },
-  { rank: 2, address: '0x18bF1...9C4a', amount: 9800000, percentage: 9.8, change: -1.2 },
-  { rank: 3, address: '0x0F3d2...6E1c', amount: 7500000, percentage: 7.5, change: 0.5 },
-  { rank: 4, address: '0xA230B...7D5b', amount: 5200000, percentage: 5.2, change: 3.7 },
-  { rank: 5, address: '0x63a9C...8F1d', amount: 4100000, percentage: 4.1, change: 0.0 },
+  { rank: 1, address: 'Sylvestre Villalba', amount: 15000000, percentage: 15.0, change: 4.2 },
+  { rank: 2, address: '0x7a25E...3A8b', amount: 12500000, percentage: 12.5, change: 2.3 },
+  { rank: 3, address: '0x18bF1...9C4a', amount: 9800000, percentage: 9.8, change: -1.2 },
+  { rank: 4, address: '0x0F3d2...6E1c', amount: 7500000, percentage: 7.5, change: 0.5 },
+  { rank: 5, address: '0xA230B...7D5b', amount: 5200000, percentage: 5.2, change: 3.7 },
 ];
 
 // Top players this week
