@@ -12,9 +12,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 const TokenCreator: React.FC = () => {
   const { toast } = useToast();
-  const [network, setNetwork] = useState<string>(NETWORK.MAINNET);
+  // Check if NETWORK is available as expected in SDK v1.0.3
+  // If not, define our own fallback
+  const NETWORK_VALUES = {
+    MAINNET: gfmSDK.NETWORK?.MAINNET || "mainnet",
+    DEVNET: gfmSDK.NETWORK?.DEVNET || "devnet"
+  };
+  
+  const [network, setNetwork] = useState<string>(NETWORK_VALUES.MAINNET);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [transaction, setTransaction] = useState<string>('');
+  const [sdkError, setSdkError] = useState<string | null>(null);
   
   // $LERF token data
   const defaultTokenData = {
@@ -47,6 +55,7 @@ const TokenCreator: React.FC = () => {
 
   const handleCreateToken = async () => {
     setIsLoading(true);
+    setSdkError(null);
     
     try {
       // In a real application, you would get this from the user's connected wallet
@@ -65,10 +74,15 @@ const TokenCreator: React.FC = () => {
           telegram: formData.telegram
         },
         amountIn: formData.amountIn,
-        network: network as NETWORK,
+        network: network, // Let the SDK handle the network value internally
         creatorWalletAddress: formData.creatorWalletAddress || creator.publicKey.toString(),
         supply: formData.supply
       };
+
+      // Check if the required API methods exist
+      if (!gfmSDK.api?.bondingCurve?.createPool?.request) {
+        throw new Error("The GoFundMeme SDK version installed is not compatible with this application.");
+      }
 
       const createRequest = await gfmSDK.api.bondingCurve.createPool.request(payload);
       
@@ -87,6 +101,11 @@ const TokenCreator: React.FC = () => {
             title: "Signing transaction",
             description: "Please wait while the transaction is being processed...",
           });
+          
+          // Check if signAndConfirm method exists
+          if (typeof createRequest.signAndConfirm !== 'function') {
+            throw new Error("The SDK version doesn't support direct transaction signing.");
+          }
           
           const response = await createRequest.signAndConfirm({ creator });
           
@@ -116,9 +135,11 @@ const TokenCreator: React.FC = () => {
       
     } catch (error) {
       console.error("Error creating token:", error);
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      setSdkError(errorMessage);
       toast({
         title: "Error creating token",
-        description: error instanceof Error ? error.message : "Unknown error occurred",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
