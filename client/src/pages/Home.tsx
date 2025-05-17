@@ -12,6 +12,7 @@ import ReferralSystem from '@/components/ReferralSystem';
 import SocialFiIntegration from '@/components/SocialFiIntegration';
 import MarketplacePreview from '@/components/MarketplacePreview';
 import TokenPriceChart from '@/components/TokenPriceChart';
+import TokenVisualization from '@/components/TokenVisualization';
 import Footer from '@/components/Footer';
 import WalletModal from '@/components/WalletModal';
 import { useWallet } from '@/hooks/useWallet';
@@ -243,6 +244,17 @@ const Home: React.FC = () => {
           
           <motion.div variants={fadeInUp}>
             <TokenPriceChart />
+          </motion.div>
+          
+          {/* Interactive Token Visualization with Slerf Cat Mascot */}
+          <motion.div className="mt-10" variants={fadeInUp}>
+            <h2 className="text-3xl font-space font-bold mb-6 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slerf-cyan mr-2">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+              </svg>
+              Live Network Activity
+            </h2>
+            <TokenVisualization />
           </motion.div>
           
           <motion.div 
