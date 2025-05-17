@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import FairLaunchCreator from '@/components/FairLaunchCreator';
+import SimpleFairLaunchCreator from '@/components/SimpleFairLaunchCreator';
 import { motion } from 'framer-motion';
 
 const TokenCreatorPage: React.FC = () => {
@@ -30,7 +30,7 @@ const TokenCreatorPage: React.FC = () => {
           </TabsList>
           
           <TabsContent value="fair-launch">
-            <FairLaunchCreator />
+            <SimpleFairLaunchCreator />
           </TabsContent>
           
           <TabsContent value="bonding-curve">
