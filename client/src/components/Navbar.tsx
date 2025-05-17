@@ -13,16 +13,16 @@ const Navbar: React.FC<NavbarProps> = ({ onWalletClick }) => {
   
   // If wallet is connected, fetch user data to get SLERF balance
   const { data: userData } = useQuery({
-    queryKey: ['/api/users/wallet', wallet?.address],
+    queryKey: ['/api/users/wallet', wallet],
     queryFn: async () => {
-      if (!wallet?.address) return null;
-      const response = await fetch(`/api/users/wallet/${wallet.address}`);
+      if (!wallet) return null;
+      const response = await fetch(`/api/users/wallet/${wallet}`);
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
       }
       return response.json();
     },
-    enabled: !!wallet?.address,
+    enabled: !!wallet,
   });
 
   const slerfBalance = userData?.slerfBalance || 0;
