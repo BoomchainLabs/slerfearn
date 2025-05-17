@@ -126,9 +126,21 @@ function publishOpenApi(config) {
     console.log(`- Organization: ${config.organizationId}`);
     console.log(`- File: ${config.specPath}`);
     
-    const command = `npx gitbook openapi publish --spec ${config.specName} --organization ${config.organizationId} "${config.specPath}"`;
-    
-    const output = execSync(command, { encoding: 'utf8' });
+    // Use an array to safely pass arguments to execSync without shell injection risk
+    const output = execSync(
+      'npx',
+      [
+        'gitbook',
+        'openapi',
+        'publish',
+        '--spec',
+        config.specName,
+        '--organization',
+        config.organizationId,
+        config.specPath
+      ],
+      { encoding: 'utf8' }
+    );
     console.log('Publication successful!');
     console.log(output);
     return true;
