@@ -26,7 +26,7 @@ const fetchGitBookContent = async (space: string, path: string, token: string) =
       throw new Error(`Failed to fetch content structure: ${structureResponse.statusText}`);
     }
     
-    const structure = await structureResponse.json();
+    const structure = await structureResponse.json() as { pages: GitBookPage[] };
     
     // Recursively find the page by path
     const findPageByPath = (pages: GitBookPage[], targetPath: string): GitBookPage | null => {
@@ -57,7 +57,11 @@ const fetchGitBookContent = async (space: string, path: string, token: string) =
       throw new Error(`Failed to fetch page content: ${contentResponse.statusText}`);
     }
     
-    const contentData = await contentResponse.json();
+    const contentData = await contentResponse.json() as {
+      title: string;
+      description?: string;
+      content: { html: string };
+    };
     
     return {
       title: contentData.title,

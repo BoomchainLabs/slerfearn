@@ -7,6 +7,7 @@ import Home from "@/pages/Home";
 import Games from "@/pages/Games";
 import Documentation from "@/pages/Documentation";
 import TokenCreator from "@/pages/TokenCreator";
+import ApiDocs from "@/pages/ApiDocs";
 import NotFound from "@/pages/not-found";
 import { WalletProvider } from "./hooks/useWallet.tsx";
 
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/games" component={Games}/>
       <Route path="/docs" component={Documentation}/>
       <Route path="/token-creator" component={TokenCreator}/>
+      <Route path="/api-docs" component={ApiDocs}/>
       <Route component={NotFound} />
     </Switch>
   );
