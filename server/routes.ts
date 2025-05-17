@@ -588,6 +588,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // GitBook Documentation routes
+  router.get('/gitbook', handleGitBookRequest);
   router.get('/gitbook/docs/:page', handleGitBookRequest);
   
   router.post('/gitbook/publish-openapi', async (req: Request, res: Response) => {

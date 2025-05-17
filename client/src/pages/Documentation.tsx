@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'wouter';
-import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
@@ -8,6 +7,7 @@ import slerfLogo from '@/assets/slerf-logo.svg';
 import { Button } from '@/components/ui/button';
 import { useWallet } from '@/hooks/useWallet';
 import { useToast } from '@/hooks/use-toast';
+import GitBookDocs from '@/components/GitBookDocs';
 
 // Animation variants
 const fadeIn = {
@@ -48,7 +48,6 @@ const Documentation: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slerf-dark">
-      <Navbar onWalletClick={handleWalletConnect} />
       
       <motion.div 
         className="container mx-auto px-4 py-24"
@@ -72,7 +71,7 @@ const Documentation: React.FC = () => {
           onValueChange={setActiveTab}
           className="w-full max-w-5xl mx-auto glass p-6 rounded-xl"
         >
-          <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-8">
+          <TabsList className="grid grid-cols-2 md:grid-cols-6 gap-2 mb-8">
             <TabsTrigger value="overview" className="data-[state=active]:bg-slerf-cyan data-[state=active]:text-slerf-dark">
               Overview
             </TabsTrigger>
@@ -87,6 +86,9 @@ const Documentation: React.FC = () => {
             </TabsTrigger>
             <TabsTrigger value="contract" className="data-[state=active]:bg-slerf-cyan data-[state=active]:text-slerf-dark">
               Contract
+            </TabsTrigger>
+            <TabsTrigger value="gitbook" className="data-[state=active]:bg-slerf-cyan data-[state=active]:text-slerf-dark">
+              GitBook
             </TabsTrigger>
           </TabsList>
           
