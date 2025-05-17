@@ -223,8 +223,8 @@ function check_accounts() {
     BALANCE="5.00 SOL"
     AUTHORITY=$(cat "$AUTHORITY_PATH" 2>/dev/null | grep -o '[1-9A-HJ-NP-Za-km-z]\{32,44\}' || echo "Unknown")
     if [ "$AUTHORITY" = "Unknown" ]; then
-      # If we can't extract from the file, use a simulated authority
-      AUTHORITY="3XU63LtubxRjVKA2gPEZUmwJ9giykj8rKznJZMnYAD6t"
+      # If we can't extract from the file, use a simulated authority placeholder
+      AUTHORITY="SIMULATED_AUTHORITY_ADDRESS"
     fi
     
     echo -e "${GREEN}Nonce Account Information (SIMULATED):${NC}"
