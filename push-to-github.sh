@@ -2,8 +2,8 @@
 
 # Script to push the $LERF project to GitHub
 # Set these variables
-GITHUB_USERNAME="your-username"
-GITHUB_EMAIL="your-email@example.com"
+GITHUB_USERNAME="Boomchainlab"
+GITHUB_EMAIL="Cashapppaymentpay01@gmail.com"
 REPO_URL="https://github.com/Boomchainlab/lerf-rewards-hub.git"
 COMMIT_MESSAGE="Initial upload of $LERF Rewards Hub project"
 
@@ -29,12 +29,22 @@ git commit -m "$COMMIT_MESSAGE"
 echo -e "${YELLOW}Adding remote repository...${NC}"
 git remote add origin $REPO_URL
 
+echo -e "${YELLOW}Please enter your GitHub Personal Access Token:${NC}"
+read -s GITHUB_TOKEN
+
+# Set the remote URL with token for authentication
+REPO_URL_WITH_TOKEN="https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/Boomchainlab/lerf-rewards-hub.git"
+git remote set-url origin $REPO_URL_WITH_TOKEN
+
 echo -e "${YELLOW}Pushing to GitHub...${NC}"
 if git push -u origin main; then
   echo -e "${GREEN}Successfully pushed to GitHub!${NC}"
-  echo -e "${GREEN}Your project is now available at: $REPO_URL${NC}"
+  echo -e "${GREEN}Your project is now available at: https://github.com/Boomchainlab/lerf-rewards-hub${NC}"
 else
   echo -e "${RED}Failed to push to GitHub. Please check your credentials and try again.${NC}"
-  echo -e "${YELLOW}You might need to use a personal access token instead of your password.${NC}"
+  echo -e "${YELLOW}Make sure you have created a Personal Access Token with 'repo' permissions.${NC}"
   echo -e "${YELLOW}Create one at: https://github.com/settings/tokens${NC}"
 fi
+
+# Reset the remote URL for security (removes token from git config)
+git remote set-url origin $REPO_URL
