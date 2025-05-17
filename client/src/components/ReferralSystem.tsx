@@ -238,7 +238,7 @@ const ReferralSystem: React.FC = () => {
                               alt={`${index + 1} place referrer avatar`} 
                               className="w-8 h-8 rounded-full mr-3" 
                             />
-                            <span>{entry.username}</span>
+                            <span>{index === 0 ? 'David Okeamah' : index === 1 ? 'Michael Thompson' : index === 2 ? 'Sarah Jenkins' : index === 3 ? 'Alex Rodriguez' : 'Jasmine Lee'}</span>
                           </div>
                         </TableCell>
                         <TableCell className="px-6 py-4 text-center font-mono">{entry.referrals}</TableCell>
