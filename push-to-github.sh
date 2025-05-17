@@ -3,7 +3,7 @@
 # Script to push the $LERF project to GitHub
 # Set these variables
 GITHUB_USERNAME="Boomchainlab"
-GITHUB_EMAIL="Cashapppaymentpay01@gmail.com"
+GITHUB_EMAIL="support@boomchainlab.com"
 REPO_URL="https://github.com/Boomchainlab/lerf-rewards-hub.git"
 COMMIT_MESSAGE="Initial upload of $LERF Rewards Hub project"
 
