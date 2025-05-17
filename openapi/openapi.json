@@ -1,0 +1,1038 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "$LERF API",
+    "description": "Official API documentation for the $LERF token ecosystem, curated by Sylvestre Villalba and the $LERF team.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Boom Chain Lab",
+      "email": "support@boomchainlab.com",
+      "url": "https://lerfhub.xyz"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.lerfhub.xyz/api",
+      "description": "Production API server"
+    },
+    {
+      "url": "https://staging.lerfhub.xyz/api",
+      "description": "Staging API server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "users",
+      "description": "User management and authentication"
+    },
+    {
+      "name": "missions",
+      "description": "Daily missions and tasks"
+    },
+    {
+      "name": "quests",
+      "description": "Weekly and monthly quests"
+    },
+    {
+      "name": "staking",
+      "description": "Token staking and rewards"
+    },
+    {
+      "name": "games",
+      "description": "Game integration and leaderboards"
+    },
+    {
+      "name": "nfts",
+      "description": "NFT management and metadata"
+    },
+    {
+      "name": "marketplace",
+      "description": "Marketplace listings and purchases"
+    },
+    {
+      "name": "referrals",
+      "description": "Referral program management"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Create a new user",
+        "description": "Register a new user in the system with their wallet address",
+        "operationId": "createUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/wallet/{address}": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Get user by wallet address",
+        "description": "Retrieve user details by their blockchain wallet address",
+        "operationId": "getUserByWallet",
+        "parameters": [
+          {
+            "name": "address",
+            "in": "path",
+            "description": "Blockchain wallet address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/missions": {
+      "get": {
+        "tags": ["missions"],
+        "summary": "Get all available missions",
+        "description": "Retrieve the list of all available missions",
+        "operationId": "getMissions",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter missions by status",
+            "schema": {
+              "type": "string",
+              "enum": ["active", "inactive", "completed"]
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "Filter missions by category",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of missions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Mission"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/missions/{id}": {
+      "get": {
+        "tags": ["missions"],
+        "summary": "Get mission by ID",
+        "description": "Retrieve detailed information about a specific mission",
+        "operationId": "getMissionById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Mission ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mission details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mission"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Mission not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}/missions": {
+      "get": {
+        "tags": ["missions", "users"],
+        "summary": "Get user missions",
+        "description": "Retrieve all missions for a specific user",
+        "operationId": "getUserMissions",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user missions with progress",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserMissionProgress"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/staking/vaults": {
+      "get": {
+        "tags": ["staking"],
+        "summary": "Get all staking vaults",
+        "description": "Retrieve all available staking vaults",
+        "operationId": "getStakingVaults",
+        "responses": {
+          "200": {
+            "description": "List of staking vaults",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StakingVault"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}/stakes": {
+      "get": {
+        "tags": ["staking", "users"],
+        "summary": "Get user stakes",
+        "description": "Retrieve all staking positions for a specific user",
+        "operationId": "getUserStakes",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user staking positions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserStake"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["staking", "users"],
+        "summary": "Create user stake",
+        "description": "Stake tokens in a vault",
+        "operationId": "createUserStake",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewStake"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Stake created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserStake"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User or vault not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}/referrals": {
+      "get": {
+        "tags": ["referrals", "users"],
+        "summary": "Get user referrals",
+        "description": "Retrieve all referrals made by a specific user",
+        "operationId": "getUserReferrals",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user referrals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Referral"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats": {
+      "get": {
+        "tags": ["stats"],
+        "summary": "Get platform statistics",
+        "description": "Retrieve overall platform statistics and metrics",
+        "operationId": "getPlatformStats",
+        "responses": {
+          "200": {
+            "description": "Platform statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformStats"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/token/info": {
+      "get": {
+        "tags": ["token"],
+        "summary": "Get $LERF token information",
+        "description": "Retrieve current information about the $LERF token",
+        "operationId": "getTokenInfo",
+        "responses": {
+          "200": {
+            "description": "Token information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "NewUser": {
+        "type": "object",
+        "required": ["walletAddress"],
+        "properties": {
+          "walletAddress": {
+            "type": "string",
+            "description": "User's blockchain wallet address"
+          },
+          "username": {
+            "type": "string",
+            "description": "User's chosen username"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address"
+          },
+          "referralCode": {
+            "type": "string",
+            "description": "Referral code used during signup"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique user identifier"
+          },
+          "walletAddress": {
+            "type": "string",
+            "description": "User's blockchain wallet address"
+          },
+          "username": {
+            "type": "string",
+            "description": "User's chosen username"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address"
+          },
+          "referralCode": {
+            "type": "string",
+            "description": "User's unique referral code"
+          },
+          "totalPoints": {
+            "type": "integer",
+            "description": "Total points earned by the user"
+          },
+          "level": {
+            "type": "integer",
+            "description": "User's current level"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "User creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        }
+      },
+      "Mission": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique mission identifier"
+          },
+          "title": {
+            "type": "string",
+            "description": "Mission title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed mission description"
+          },
+          "category": {
+            "type": "string",
+            "description": "Mission category"
+          },
+          "points": {
+            "type": "integer",
+            "description": "Points rewarded for completing the mission"
+          },
+          "tokenReward": {
+            "type": "number",
+            "format": "float",
+            "description": "Token amount rewarded for completing the mission"
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MissionRequirement"
+            },
+            "description": "List of requirements to complete the mission"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Mission start timestamp"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Mission end timestamp"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive", "completed"],
+            "description": "Current mission status"
+          }
+        }
+      },
+      "MissionRequirement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique requirement identifier"
+          },
+          "description": {
+            "type": "string",
+            "description": "Requirement description"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["transaction", "social", "quiz", "game", "other"],
+            "description": "Type of requirement"
+          },
+          "target": {
+            "type": "integer",
+            "description": "Target value to reach"
+          },
+          "verificationMethod": {
+            "type": "string",
+            "enum": ["automatic", "manual"],
+            "description": "How the requirement is verified"
+          }
+        }
+      },
+      "UserMissionProgress": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique progress identifier"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "User identifier"
+          },
+          "missionId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Mission identifier"
+          },
+          "mission": {
+            "$ref": "#/components/schemas/Mission"
+          },
+          "progress": {
+            "type": "number",
+            "description": "Current progress percentage (0-100)"
+          },
+          "completed": {
+            "type": "boolean",
+            "description": "Whether the mission is completed"
+          },
+          "claimed": {
+            "type": "boolean",
+            "description": "Whether the reward has been claimed"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Completion timestamp"
+          },
+          "claimedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Reward claim timestamp"
+          }
+        }
+      },
+      "StakingVault": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique vault identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Vault name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Vault description"
+          },
+          "apr": {
+            "type": "number",
+            "format": "float",
+            "description": "Annual percentage rate"
+          },
+          "minLockPeriod": {
+            "type": "integer",
+            "description": "Minimum lock period in days"
+          },
+          "totalStaked": {
+            "type": "number",
+            "format": "float",
+            "description": "Total amount staked in this vault"
+          },
+          "rewards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StakingReward"
+            },
+            "description": "Rewards offered by this vault"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Whether the vault is active"
+          }
+        }
+      },
+      "StakingReward": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique reward identifier"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["token", "nft", "boost", "other"],
+            "description": "Type of reward"
+          },
+          "description": {
+            "type": "string",
+            "description": "Reward description"
+          },
+          "rate": {
+            "type": "number",
+            "format": "float",
+            "description": "Reward rate"
+          },
+          "distribution": {
+            "type": "string",
+            "enum": ["daily", "weekly", "monthly", "end"],
+            "description": "When the reward is distributed"
+          }
+        }
+      },
+      "NewStake": {
+        "type": "object",
+        "required": ["vaultId", "amount"],
+        "properties": {
+          "vaultId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Vault identifier"
+          },
+          "amount": {
+            "type": "number",
+            "format": "float",
+            "description": "Amount to stake"
+          },
+          "lockPeriod": {
+            "type": "integer",
+            "description": "Lock period in days"
+          },
+          "autoCompound": {
+            "type": "boolean",
+            "description": "Whether to auto-compound rewards"
+          }
+        }
+      },
+      "UserStake": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique stake identifier"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "User identifier"
+          },
+          "vaultId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Vault identifier"
+          },
+          "vault": {
+            "$ref": "#/components/schemas/StakingVault"
+          },
+          "amount": {
+            "type": "number",
+            "format": "float",
+            "description": "Staked amount"
+          },
+          "lockPeriod": {
+            "type": "integer",
+            "description": "Lock period in days"
+          },
+          "autoCompound": {
+            "type": "boolean",
+            "description": "Whether rewards are auto-compounded"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Start timestamp"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "End timestamp"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "completed", "claimed"],
+            "description": "Stake status"
+          },
+          "totalRewards": {
+            "type": "number",
+            "format": "float",
+            "description": "Total rewards earned"
+          }
+        }
+      },
+      "Referral": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique referral identifier"
+          },
+          "referrerId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Referrer user identifier"
+          },
+          "refereeId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Referred user identifier"
+          },
+          "referee": {
+            "$ref": "#/components/schemas/User"
+          },
+          "code": {
+            "type": "string",
+            "description": "Referral code used"
+          },
+          "rewardAmount": {
+            "type": "number",
+            "format": "float",
+            "description": "Reward amount given to referrer"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "rewarded", "expired"],
+            "description": "Referral status"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Referral creation timestamp"
+          },
+          "rewardedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Reward timestamp"
+          }
+        }
+      },
+      "PlatformStats": {
+        "type": "object",
+        "properties": {
+          "totalUsers": {
+            "type": "integer",
+            "description": "Total number of users"
+          },
+          "totalStaked": {
+            "type": "number",
+            "format": "float",
+            "description": "Total amount staked across all vaults"
+          },
+          "totalTokensDistributed": {
+            "type": "number",
+            "format": "float",
+            "description": "Total tokens distributed as rewards"
+          },
+          "activeMissions": {
+            "type": "integer",
+            "description": "Number of active missions"
+          },
+          "activeQuests": {
+            "type": "integer",
+            "description": "Number of active quests"
+          },
+          "dailyActiveUsers": {
+            "type": "integer",
+            "description": "Daily active users"
+          },
+          "weeklyActiveUsers": {
+            "type": "integer",
+            "description": "Weekly active users"
+          },
+          "monthlyActiveUsers": {
+            "type": "integer",
+            "description": "Monthly active users"
+          }
+        }
+      },
+      "TokenInfo": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Token name"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Token symbol"
+          },
+          "address": {
+            "type": "string",
+            "description": "Token contract address"
+          },
+          "decimals": {
+            "type": "integer",
+            "description": "Token decimals"
+          },
+          "totalSupply": {
+            "type": "number",
+            "format": "float",
+            "description": "Total token supply"
+          },
+          "circulatingSupply": {
+            "type": "number",
+            "format": "float",
+            "description": "Circulating token supply"
+          },
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "Current token price in USD"
+          },
+          "marketCap": {
+            "type": "number",
+            "format": "float",
+            "description": "Current market capitalization"
+          },
+          "volume24h": {
+            "type": "number",
+            "format": "float",
+            "description": "24-hour trading volume"
+          },
+          "priceChange24h": {
+            "type": "number",
+            "format": "float",
+            "description": "24-hour price change percentage"
+          },
+          "listings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "exchange": {
+                  "type": "string",
+                  "description": "Exchange name"
+                },
+                "pair": {
+                  "type": "string",
+                  "description": "Trading pair"
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Link to exchange"
+                }
+              }
+            },
+            "description": "Exchanges where the token is listed"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "code": {
+            "type": "string",
+            "description": "Error code"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Path of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Specific error message"
+                }
+              }
+            },
+            "description": "Detailed error information"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token for API authentication"
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ]
+}
