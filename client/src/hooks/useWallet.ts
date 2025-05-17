@@ -16,7 +16,7 @@ const WalletContext = createContext<WalletContextType>({
   disconnect: () => {},
 });
 
-export const WalletProvider = ({ children }: { children: ReactNode }) => {
+export const WalletProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   const [wallet, setWallet] = useState<WalletInfo | null>(null);
   const [connecting, setConnecting] = useState(false);
   const { toast } = useToast();

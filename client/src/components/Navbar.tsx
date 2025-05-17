@@ -38,7 +38,7 @@ const Navbar: React.FC<NavbarProps> = ({ onWalletClick }) => {
     <nav className="fixed top-0 left-0 right-0 z-50 glass">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <img src="/src/assets/slerf-logo.svg" alt="Slerf Logo" className="h-10 w-10" />
+          <img src="../assets/slerf-logo.svg" alt="Slerf Logo" className="h-10 w-10" />
           <span className="font-space font-bold text-xl md:text-2xl">SlerfHub</span>
         </div>
         
