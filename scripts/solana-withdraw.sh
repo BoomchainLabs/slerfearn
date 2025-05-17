@@ -4,6 +4,11 @@
 # 
 # This script safely executes a withdrawal from a Solana nonce account,
 # providing detailed logging and verification.
+#
+# IMPORTANT: To use this script for real withdrawals, you must:
+# 1. Download it to your local machine
+# 2. Install the Solana CLI: https://docs.solanalabs.com/cli/install
+# 3. Run it with your actual keypair file
 # =============================================================================
 
 # Text colors for output
@@ -21,6 +26,7 @@ NETWORK="mainnet-beta"
 VERBOSE=false
 DRY_RUN=false
 CONFIRM=false
+SIMULATION_MODE=false
 LOG_DIR="$HOME/.solana/withdrawal_logs"
 
 # Display banner
@@ -44,6 +50,7 @@ function display_usage() {
   echo "  --verbose            Enable verbose output"
   echo "  --dry-run            Simulate the withdrawal without executing it"
   echo "  --confirm            Skip confirmation prompt (use with caution!)"
+  echo "  --simulate           Run in simulation mode (for environments without Solana CLI)"
   echo "  --help               Display this help message"
   echo ""
   echo "Example:"
@@ -81,6 +88,10 @@ function parse_arguments() {
         ;;
       --confirm)
         CONFIRM=true
+        shift
+        ;;
+      --simulate)
+        SIMULATION_MODE=true
         shift
         ;;
       --help)
@@ -121,8 +132,8 @@ function setup_logging() {
 function validate_inputs() {
   echo -e "${BLUE}Validating inputs...${NC}"
   
-  # Check if Solana CLI is installed
-  if ! command -v solana &> /dev/null; then
+  # Check if Solana CLI is installed (bypass check in simulation mode)
+  if [ "$SIMULATION_MODE" != true ] && ! command -v solana &> /dev/null; then
     echo -e "${RED}Error: Solana CLI is not installed${NC}"
     echo "Please install the Solana CLI: https://docs.solanalabs.com/cli/install"
     exit 1
@@ -185,11 +196,15 @@ function set_network() {
       ;;
   esac
   
-  solana config set --url "$network_url"
-  
-  if [ $? -ne 0 ]; then
-    echo -e "${RED}Failed to set network configuration${NC}"
-    exit 1
+  if [ "$SIMULATION_MODE" = true ]; then
+    echo -e "${YELLOW}Simulation mode: Would connect to $network_url${NC}"
+  else
+    solana config set --url "$network_url"
+    
+    if [ $? -ne 0 ]; then
+      echo -e "${RED}Failed to set network configuration${NC}"
+      exit 1
+    fi
   fi
   
   echo -e "${GREEN}Network set to $NETWORK${NC}"
@@ -200,32 +215,58 @@ function set_network() {
 function check_accounts() {
   echo -e "${BLUE}Checking account information...${NC}"
   
-  # Check nonce account
-  echo "Checking nonce account: $NONCE_ACCOUNT"
-  NONCE_INFO=$(solana nonce-account "$NONCE_ACCOUNT" 2>&1)
-  
-  if [ $? -ne 0 ]; then
-    echo -e "${RED}Error checking nonce account:${NC}"
-    echo "$NONCE_INFO"
-    exit 1
+  if [ "$SIMULATION_MODE" = true ]; then
+    # Simulate nonce account check
+    echo "Checking nonce account: $NONCE_ACCOUNT (SIMULATION)"
+    
+    # Simulate balance and authority information
+    BALANCE="5.00 SOL"
+    AUTHORITY=$(cat "$AUTHORITY_PATH" 2>/dev/null | grep -o '[1-9A-HJ-NP-Za-km-z]\{32,44\}' || echo "Unknown")
+    if [ "$AUTHORITY" = "Unknown" ]; then
+      # If we can't extract from the file, use a simulated authority
+      AUTHORITY="3XU63LtubxRjVKA2gPEZUmwJ9giykj8rKznJZMnYAD6t"
+    fi
+    
+    echo -e "${GREEN}Nonce Account Information (SIMULATED):${NC}"
+    echo "  Address: $NONCE_ACCOUNT"
+    echo "  Balance: $BALANCE"
+    echo "  Authority: $AUTHORITY"
+    
+    # Check recipient (simulated)
+    echo -e "${BLUE}Checking recipient account: $RECIPIENT (SIMULATION)${NC}"
+    echo -e "${GREEN}Recipient Account Information (SIMULATED):${NC}"
+    echo "  Address: $RECIPIENT"
+    echo "  Owner: 11111111111111111111111111111111"
+    echo "  Lamports: 2039280"
+    echo "  Data: Zero-initialized account"
+  else
+    # Real account check
+    echo "Checking nonce account: $NONCE_ACCOUNT"
+    NONCE_INFO=$(solana nonce-account "$NONCE_ACCOUNT" 2>&1)
+    
+    if [ $? -ne 0 ]; then
+      echo -e "${RED}Error checking nonce account:${NC}"
+      echo "$NONCE_INFO"
+      exit 1
+    fi
+    
+    # Extract balance
+    BALANCE=$(echo "$NONCE_INFO" | grep "Balance:" | awk '{print $2}')
+    AUTHORITY=$(echo "$NONCE_INFO" | grep "Authority:" | awk '{print $2}')
+    
+    echo -e "${GREEN}Nonce Account Information:${NC}"
+    echo "  Address: $NONCE_ACCOUNT"
+    echo "  Balance: $BALANCE"
+    echo "  Authority: $AUTHORITY"
+    
+    # Check recipient
+    echo -e "${BLUE}Checking recipient account: $RECIPIENT${NC}"
+    RECIPIENT_INFO=$(solana account "$RECIPIENT" 2>&1 || echo "Account does not exist yet (new account)")
+    
+    echo -e "${GREEN}Recipient Account Information:${NC}"
+    echo "  Address: $RECIPIENT"
+    echo "  $RECIPIENT_INFO"
   fi
-  
-  # Extract balance
-  BALANCE=$(echo "$NONCE_INFO" | grep "Balance:" | awk '{print $2}')
-  AUTHORITY=$(echo "$NONCE_INFO" | grep "Authority:" | awk '{print $2}')
-  
-  echo -e "${GREEN}Nonce Account Information:${NC}"
-  echo "  Address: $NONCE_ACCOUNT"
-  echo "  Balance: $BALANCE"
-  echo "  Authority: $AUTHORITY"
-  
-  # Check recipient
-  echo -e "${BLUE}Checking recipient account: $RECIPIENT${NC}"
-  RECIPIENT_INFO=$(solana account "$RECIPIENT" 2>&1 || echo "Account does not exist yet (new account)")
-  
-  echo -e "${GREEN}Recipient Account Information:${NC}"
-  echo "  Address: $RECIPIENT"
-  echo "  $RECIPIENT_INFO"
   
   return 0
 }
