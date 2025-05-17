@@ -25,7 +25,14 @@ const Navbar = () => {
   const { wallet, connectWallet, disconnectWallet } = useWallet();
   const [isOpen, setIsOpen] = useState(false);
 
-  const NavItem = ({ href, icon, children, onClick = () => {} }) => {
+  interface NavItemProps {
+    href: string;
+    icon: React.ReactNode;
+    children: React.ReactNode;
+    onClick?: () => void;
+  }
+
+  const NavItem = ({ href, icon, children, onClick = () => {} }: NavItemProps) => {
     const isActive = location === href;
     return (
       <Link href={href}>

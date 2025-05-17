@@ -6,13 +6,12 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { useWallet } from '@/hooks/useWallet';
 import { useToast } from '@/hooks/use-toast';
-import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import slerfLogo from '@/assets/slerf-logo.svg';
 import { motion } from 'framer-motion';
 
 const Games: React.FC = () => {
-  const { wallet, connectWallet, balance } = useWallet();
+  const { wallet, connectWallet } = useWallet();
   const { toast } = useToast();
   const [activeGame, setActiveGame] = useState<'spin' | 'blockchain'>('spin');
   const [isLoaded, setIsLoaded] = useState(false);
@@ -32,15 +31,13 @@ const Games: React.FC = () => {
     } else {
       toast({
         title: "Wallet Connected",
-        description: `You're already connected with balance: ${balance} SLERF`,
+        description: `You're already connected with balance: ${wallet.balance}`,
       });
     }
   };
 
   return (
     <div className="w-full min-h-screen bg-slerf-dark">
-      <Navbar onWalletClick={handleWalletConnect} />
-      
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }}
@@ -69,7 +66,7 @@ const Games: React.FC = () => {
           {wallet && (
             <div className="glass p-4 rounded-xl flex items-center space-x-3 mt-4">
               <img src={slerfLogo} alt="SLERF Token" className="w-8 h-8" />
-              <span className="text-xl font-medium">{balance} SLERF Tokens</span>
+              <span className="text-xl font-medium">{wallet.balance}</span>
             </div>
           )}
         </div>
