@@ -4,6 +4,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 import { ZodError } from "zod";
+import { handleGitBookRequest } from "./gitbook";
 import { 
   insertUserSchema,
   insertUserMissionProgressSchema,
