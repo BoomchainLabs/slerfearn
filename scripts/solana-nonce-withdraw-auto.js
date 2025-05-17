@@ -28,8 +28,15 @@ const execFilePromise = (command, args) => new Promise((resolve, reject) => {
 });
 
 // For backward compatibility and commands that don't need argument separation
+// Using execFile with shell:false for security (prevents command injection)
 const exec = (command) => new Promise((resolve, reject) => {
-  execCallback(command, (error, stdout, stderr) => {
+  // Split command string into command and arguments
+  const parts = command.split(' ');
+  const cmd = parts[0];
+  const args = parts.slice(1);
+  
+  // Use execFile instead of exec for security
+  execFile(cmd, args, (error, stdout, stderr) => {
     if (error) reject(error);
     else resolve({ stdout, stderr });
   });
