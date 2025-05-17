@@ -99,7 +99,7 @@ const games: Game[] = [
 ];
 
 const BlockchainGames: React.FC = () => {
-  const { wallet, connectWallet } = useWallet();
+  const { wallet, connectWallet: connect } = useWallet();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>("all");
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
@@ -274,7 +274,7 @@ const BlockchainGames: React.FC = () => {
           <div className="text-center mt-8">
             <Button 
               size="lg" 
-              onClick={connectWallet}
+              onClick={connect}
               className="bg-slerf-purple hover:bg-slerf-purple/90"
             >
               Connect Wallet to Play & Earn

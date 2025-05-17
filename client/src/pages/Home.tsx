@@ -18,7 +18,7 @@ import { useWallet } from '@/hooks/useWallet';
 
 const Home: React.FC = () => {
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
-  const { wallet, connect, disconnect } = useWallet();
+  const { wallet, connectWallet, disconnectWallet } = useWallet();
 
   const openWalletModal = () => {
     setIsWalletModalOpen(true);
@@ -30,7 +30,7 @@ const Home: React.FC = () => {
 
   const handleWalletConnect = async () => {
     if (wallet) {
-      disconnect();
+      disconnectWallet();
     } else {
       try {
         openWalletModal();
@@ -65,7 +65,7 @@ const Home: React.FC = () => {
       <WalletModal 
         isOpen={isWalletModalOpen} 
         onClose={closeWalletModal} 
-        onConnect={connect}
+        onConnect={connectWallet}
       />
     </div>
   );
