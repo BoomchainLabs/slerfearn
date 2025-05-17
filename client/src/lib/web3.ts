@@ -1,6 +1,13 @@
 import { ethers } from "ethers";
 import { apiRequest } from "./queryClient";
 
+// Extend the Window interface to include ethereum
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
 export interface WalletInfo {
   address: string;
   shortAddress: string;

@@ -1,6 +1,6 @@
-import { createContext, useState, useContext, useEffect, ReactNode } from "react";
-import { WalletInfo, connectWallet } from "@/lib/web3";
-import { useToast } from "@/hooks/use-toast";
+import React, { createContext, useState, useContext, useEffect, ReactNode } from "react";
+import { WalletInfo, connectWallet } from "../lib/web3";
+import { useToast } from "./use-toast";
 
 interface WalletContextType {
   wallet: WalletInfo | null;
@@ -16,7 +16,7 @@ const WalletContext = createContext<WalletContextType>({
   disconnect: () => {},
 });
 
-export const WalletProvider = ({ children }: { children: ReactNode }): JSX.Element => {
+export function WalletProvider({ children }: { children: ReactNode }) {
   const [wallet, setWallet] = useState<WalletInfo | null>(null);
   const [connecting, setConnecting] = useState(false);
   const { toast } = useToast();
@@ -95,6 +95,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }): JSX.Eleme
         window.ethereum.removeListener("chainChanged", () => {});
       };
     }
+    return undefined;
   }, [wallet]);
 
   return (
@@ -102,6 +103,6 @@ export const WalletProvider = ({ children }: { children: ReactNode }): JSX.Eleme
       {children}
     </WalletContext.Provider>
   );
-};
+}
 
 export const useWallet = () => useContext(WalletContext);
