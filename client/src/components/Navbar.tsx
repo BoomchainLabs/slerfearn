@@ -1,172 +1,158 @@
-import React, { useState } from 'react';
-import { useWallet } from '@/hooks/useWallet';
-import { useQuery } from '@tanstack/react-query';
-import { useToast } from '@/hooks/use-toast';
-import slerfLogo from '@/assets/slerf-logo.svg';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from "react";
+import { Link, useLocation } from "wouter";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { SiGitbook } from "react-icons/si";
+import { BookOpen, Code, Coins, Gamepad2, Home } from "lucide-react";
+import { useWallet } from "@/hooks/useWallet";
 
-interface NavbarProps {
-  onWalletClick: () => void;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ onWalletClick }) => {
-  const { wallet } = useWallet();
-  const { toast } = useToast();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
-  // If wallet is connected, fetch user data to get $LERF balance
-  const { data: userData } = useQuery({
-    queryKey: ['/api/users/wallet', wallet],
-    queryFn: async () => {
-      if (!wallet) return null;
-      const response = await fetch(`/api/users/wallet/${wallet}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-      return response.json();
-    },
-    enabled: !!wallet,
-  });
-
-  const lerfBalance = userData?.lerfBalance || 0;
-
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
-
-  const handleMobileNavClick = () => {
-    setMobileMenuOpen(false);
-  };
+const Navbar = () => {
+  const [location] = useLocation();
+  const { connect, disconnect, isConnected, account } = useWallet();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <img src={slerfLogo} alt="$LERF Logo" className="h-10 w-10" />
-          <span className="font-space font-bold text-xl md:text-2xl">$LERFHub</span>
+    <div className="sticky top-0 z-10 border-b border-slerf-dark-lighter bg-slerf-dark/80 backdrop-blur-md">
+      <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+        <div className="flex items-center gap-6">
+          {/* Logo and Brand */}
+          <Link href="/">
+            <a className="flex items-center gap-2">
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+                $LERF Hub
+              </span>
+            </a>
+          </Link>
+
+          {/* Main Navigation */}
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <Link href="/">
+                  <NavigationMenuLink
+                    className={cn(
+                      "group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+                      location === "/"
+                        ? "bg-accent text-accent-foreground"
+                        : "text-foreground/70"
+                    )}
+                  >
+                    <Home className="mr-2 h-4 w-4" />
+                    Home
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link href="/games">
+                  <NavigationMenuLink
+                    className={cn(
+                      "group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+                      location === "/games"
+                        ? "bg-accent text-accent-foreground"
+                        : "text-foreground/70"
+                    )}
+                  >
+                    <Gamepad2 className="mr-2 h-4 w-4" />
+                    Games
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Documentation
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="w-[220px] p-2">
+                    <Link href="/docs">
+                      <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                        <div className="flex items-center">
+                          <BookOpen className="h-4 w-4 mr-2" />
+                          <div className="text-sm font-medium">User Docs</div>
+                        </div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Usage guides and tutorials
+                        </p>
+                      </a>
+                    </Link>
+                    <Link href="/api-docs">
+                      <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                        <div className="flex items-center">
+                          <Code className="h-4 w-4 mr-2" />
+                          <div className="text-sm font-medium">API Docs</div>
+                        </div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Developer API reference
+                        </p>
+                      </a>
+                    </Link>
+                    <a 
+                      href="https://gitbook.com/boomchainlab"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                    >
+                      <div className="flex items-center">
+                        <SiGitbook className="h-4 w-4 mr-2" />
+                        <div className="text-sm font-medium">GitBook</div>
+                      </div>
+                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                        Full documentation on GitBook
+                      </p>
+                    </a>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link href="/token-creator">
+                  <NavigationMenuLink
+                    className={cn(
+                      "group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+                      location === "/token-creator"
+                        ? "bg-accent text-accent-foreground"
+                        : "text-foreground/70"
+                    )}
+                  >
+                    <Coins className="mr-2 h-4 w-4" />
+                    Token Creator
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
         </div>
-        
-        <div className="hidden md:flex items-center space-x-8">
-          <a href="/#missions" className="font-medium hover:text-slerf-orange transition">Missions</a>
-          <a href="/#staking" className="font-medium hover:text-slerf-orange transition">Staking</a>
-          <a href="/games" className="font-medium hover:text-slerf-orange transition">Games</a>
-          <a href="/#nfts" className="font-medium hover:text-slerf-orange transition">NFTs</a>
-          <a href="/#marketplace" className="font-medium hover:text-slerf-orange transition">Marketplace</a>
-          <a href="/docs" className="font-medium hover:text-slerf-orange transition">Documentation</a>
-        </div>
-        
-        <div className="flex items-center space-x-4">
-          {wallet && (
-            <div className="hidden md:flex items-center bg-slerf-dark/50 rounded-full px-3 py-1.5">
-              <svg className="w-4 h-4 text-slerf-orange mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M8 12h8" />
-                <path d="M12 8v8" />
-              </svg>
-              <span className="font-mono text-slerf-orange">{lerfBalance} $LERF</span>
-            </div>
+
+        {/* Wallet Connect Button */}
+        <div>
+          {isConnected ? (
+            <Button 
+              variant="outline" 
+              className="bg-slerf-dark-lighter hover:bg-slerf-dark-lighter/80"
+              onClick={disconnect}
+            >
+              {account?.substring(0, 6)}...{account?.substring(38)}
+            </Button>
+          ) : (
+            <Button 
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              onClick={connect}
+            >
+              Connect Wallet
+            </Button>
           )}
-          
-          <button 
-            onClick={onWalletClick}
-            className="bg-slerf-orange hover:bg-slerf-orange/90 text-white px-4 py-2 rounded-lg font-medium transition flex items-center"
-          >
-            <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="2" y="4" width="20" height="16" rx="2" />
-              <path d="M15 9h2" />
-              <path d="M17 9v4" />
-              <circle cx="9" cy="12" r="3" />
-            </svg>
-            <span>{wallet ? 'Disconnect' : 'Connect'}</span>
-          </button>
-          
-          <button 
-            className="md:hidden text-2xl p-1"
-            onClick={toggleMobileMenu}
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? (
-              <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-              </svg>
-            )}
-          </button>
         </div>
       </div>
-      
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden glass-dark border-t border-slerf-dark-lighter overflow-hidden"
-          >
-            <div className="container mx-auto px-4 py-3 space-y-2">
-              <a 
-                href="/#missions" 
-                className="block py-2 px-4 font-medium hover:bg-slerf-dark-light rounded-lg transition"
-                onClick={handleMobileNavClick}
-              >
-                Missions
-              </a>
-              <a 
-                href="/#staking" 
-                className="block py-2 px-4 font-medium hover:bg-slerf-dark-light rounded-lg transition"
-                onClick={handleMobileNavClick}
-              >
-                Staking
-              </a>
-              <a 
-                href="/games" 
-                className="block py-2 px-4 font-medium hover:bg-slerf-dark-light rounded-lg transition"
-                onClick={handleMobileNavClick}
-              >
-                Games
-              </a>
-              <a 
-                href="/#nfts" 
-                className="block py-2 px-4 font-medium hover:bg-slerf-dark-light rounded-lg transition"
-                onClick={handleMobileNavClick}
-              >
-                NFTs
-              </a>
-              <a 
-                href="/#marketplace" 
-                className="block py-2 px-4 font-medium hover:bg-slerf-dark-light rounded-lg transition"
-                onClick={handleMobileNavClick}
-              >
-                Marketplace
-              </a>
-              <a 
-                href="/docs" 
-                className="block py-2 px-4 font-medium hover:bg-slerf-dark-light rounded-lg transition"
-                onClick={handleMobileNavClick}
-              >
-                Documentation
-              </a>
-              
-              {wallet && (
-                <div className="flex items-center bg-slerf-dark/50 rounded-lg px-4 py-3 my-2">
-                  <svg className="w-4 h-4 text-slerf-orange mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M8 12h8" />
-                    <path d="M12 8v8" />
-                  </svg>
-                  <span className="font-mono text-slerf-orange">{lerfBalance} $LERF</span>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
+    </div>
   );
 };
 
