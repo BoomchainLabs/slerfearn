@@ -16,7 +16,7 @@ import { useWallet } from "@/hooks/useWallet";
 
 const Navbar = () => {
   const [location] = useLocation();
-  const { connect, disconnect, isConnected, account } = useWallet();
+  const { wallet, connectWallet, disconnectWallet } = useWallet();
 
   return (
     <div className="sticky top-0 z-10 border-b border-slerf-dark-lighter bg-slerf-dark/80 backdrop-blur-md">
@@ -24,11 +24,11 @@ const Navbar = () => {
         <div className="flex items-center gap-6">
           {/* Logo and Brand */}
           <Link href="/">
-            <a className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
                 $LERF Hub
               </span>
-            </a>
+            </div>
           </Link>
 
           {/* Main Navigation */}
@@ -74,7 +74,7 @@ const Navbar = () => {
                 <NavigationMenuContent>
                   <div className="w-[220px] p-2">
                     <Link href="/docs">
-                      <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                      <div className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
                         <div className="flex items-center">
                           <BookOpen className="h-4 w-4 mr-2" />
                           <div className="text-sm font-medium">User Docs</div>
@@ -82,10 +82,10 @@ const Navbar = () => {
                         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                           Usage guides and tutorials
                         </p>
-                      </a>
+                      </div>
                     </Link>
                     <Link href="/api-docs">
-                      <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                      <div className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
                         <div className="flex items-center">
                           <Code className="h-4 w-4 mr-2" />
                           <div className="text-sm font-medium">API Docs</div>
@@ -93,7 +93,7 @@ const Navbar = () => {
                         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                           Developer API reference
                         </p>
-                      </a>
+                      </div>
                     </Link>
                     <a 
                       href="https://gitbook.com/boomchainlab"
@@ -134,18 +134,18 @@ const Navbar = () => {
 
         {/* Wallet Connect Button */}
         <div>
-          {isConnected ? (
+          {wallet?.isConnected ? (
             <Button 
               variant="outline" 
               className="bg-slerf-dark-lighter hover:bg-slerf-dark-lighter/80"
-              onClick={disconnect}
+              onClick={disconnectWallet}
             >
-              {account?.substring(0, 6)}...{account?.substring(38)}
+              {wallet.address?.substring(0, 6)}...{wallet.address?.substring(38)}
             </Button>
           ) : (
             <Button 
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-              onClick={connect}
+              onClick={() => connectWallet()}
             >
               Connect Wallet
             </Button>

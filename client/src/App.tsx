@@ -10,6 +10,7 @@ import TokenCreator from "@/pages/TokenCreator";
 import ApiDocs from "@/pages/ApiDocs";
 import NotFound from "@/pages/not-found";
 import { WalletProvider } from "./hooks/useWallet.tsx";
+import Navbar from "./components/Navbar";
 
 function Router() {
   return (
