@@ -1128,6 +1128,16 @@ const Documentation: React.FC = () => {
               </motion.div>
             </motion.div>
           </TabsContent>
+
+          {/* GitBook Tab */}
+          <TabsContent value="gitbook">
+            <GitBookDocs 
+              space="0d5fcb106c-hosting"
+              defaultPage=""
+              title="$LERF Official Documentation"
+              description="Complete reference documentation for the $LERF ecosystem"
+            />
+          </TabsContent>
         </Tabs>
         
         <div className="mt-10 flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
