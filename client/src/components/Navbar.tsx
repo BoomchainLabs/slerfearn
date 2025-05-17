@@ -43,11 +43,11 @@ const Navbar: React.FC<NavbarProps> = ({ onWalletClick }) => {
         </div>
         
         <div className="hidden md:flex items-center space-x-8">
-          <a href="#missions" className="font-medium hover:text-slerf-orange transition">Missions</a>
-          <a href="#staking" className="font-medium hover:text-slerf-orange transition">Staking</a>
-          <a href="#games" className="font-medium hover:text-slerf-orange transition">Games</a>
-          <a href="#nfts" className="font-medium hover:text-slerf-orange transition">NFTs</a>
-          <a href="#marketplace" className="font-medium hover:text-slerf-orange transition">Marketplace</a>
+          <a href="/#missions" className="font-medium hover:text-slerf-orange transition">Missions</a>
+          <a href="/#staking" className="font-medium hover:text-slerf-orange transition">Staking</a>
+          <a href="/games" className="font-medium hover:text-slerf-orange transition">Games</a>
+          <a href="/#nfts" className="font-medium hover:text-slerf-orange transition">NFTs</a>
+          <a href="/#marketplace" className="font-medium hover:text-slerf-orange transition">Marketplace</a>
         </div>
         
         <div className="flex items-center space-x-4">

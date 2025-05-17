@@ -4,13 +4,15 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
+import Games from "@/pages/Games";
 import NotFound from "@/pages/not-found";
-import { SimpleWalletProvider as WalletProvider } from "./components/SimpleWalletProvider";
+import { WalletProvider } from "./hooks/useWallet";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home}/>
+      <Route path="/games" component={Games}/>
       <Route component={NotFound} />
     </Switch>
   );
