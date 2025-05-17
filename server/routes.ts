@@ -1,0 +1,591 @@
+import express, { Request, Response } from "express";
+import type { Express } from "express";
+import { createServer, type Server } from "http";
+import { storage } from "./storage";
+import { z } from "zod";
+import { ZodError } from "zod";
+import { 
+  insertUserSchema,
+  insertUserMissionProgressSchema,
+  insertUserQuestProgressSchema,
+  insertUserStakeSchema,
+  insertGameScoreSchema,
+  insertUserNftSchema,
+  insertUserPurchaseSchema,
+  insertSocialConnectionSchema
+} from "@shared/schema";
+
+function formatZodError(error: ZodError) {
+  return error.errors.map(e => ({
+    path: e.path.join('.'),
+    message: e.message
+  }));
+}
+
+export async function registerRoutes(app: Express): Promise<Server> {
+  const router = express.Router();
+
+  // Error handling middleware
+  app.use((err: any, req: Request, res: Response, next: any) => {
+    if (err instanceof ZodError) {
+      return res.status(400).json({
+        message: "Validation error",
+        errors: formatZodError(err)
+      });
+    }
+    next(err);
+  });
+
+  // User routes
+  router.post('/users', async (req: Request, res: Response) => {
+    try {
+      const userData = insertUserSchema.parse(req.body);
+      const existingUser = await storage.getUserByUsername(userData.username);
+      
+      if (existingUser) {
+        return res.status(409).json({ message: "Username already exists" });
+      }
+      
+      const user = await storage.createUser(userData);
+      res.status(201).json(user);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({
+          message: "Validation error",
+          errors: formatZodError(error)
+        });
+      }
+      throw error;
+    }
+  });
+
+  router.get('/users/wallet/:address', async (req: Request, res: Response) => {
+    const { address } = req.params;
+    const user = await storage.getUserByWalletAddress(address);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    // Don't return password
+    const { password, ...userData } = user;
+    res.json(userData);
+  });
+
+  router.get('/users/referral/:code', async (req: Request, res: Response) => {
+    const { code } = req.params;
+    const user = await storage.getUserByReferralCode(code);
+    
+    if (!user) {
+      return res.status(404).json({ message: "Referral code not found" });
+    }
+    
+    res.json({ 
+      id: user.id,
+      username: user.username,
+      referralCode: user.referralCode
+    });
+  });
+
+  // Daily Missions routes
+  router.get('/missions', async (req: Request, res: Response) => {
+    const missions = await storage.getDailyMissions();
+    res.json(missions);
+  });
+
+  router.get('/missions/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const mission = await storage.getDailyMission(parseInt(id));
+    
+    if (!mission) {
+      return res.status(404).json({ message: "Mission not found" });
+    }
+    
+    res.json(mission);
+  });
+
+  router.get('/users/:userId/missions', async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const progress = await storage.getUserMissionProgress(parseInt(userId));
+    res.json(progress);
+  });
+
+  router.post('/users/:userId/missions/:missionId/progress', async (req: Request, res: Response) => {
+    try {
+      const { userId, missionId } = req.params;
+      const data = insertUserMissionProgressSchema.parse({
+        userId: parseInt(userId),
+        missionId: parseInt(missionId),
+        progress: 0,
+        completed: false,
+        claimed: false
+      });
+      
+      const mission = await storage.getDailyMission(data.missionId);
+      if (!mission) {
+        return res.status(404).json({ message: "Mission not found" });
+      }
+      
+      const progress = await storage.initUserMissionProgress(data);
+      res.status(201).json(progress);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({
+          message: "Validation error",
+          errors: formatZodError(error)
+        });
+      }
+      throw error;
+    }
+  });
+
+  router.put('/users/:userId/missions/progress/:progressId', async (req: Request, res: Response) => {
+    try {
+      const { userId, progressId } = req.params;
+      const { progress, completed } = req.body;
+      
+      const updated = await storage.updateMissionProgress(
+        parseInt(progressId),
+        progress,
+        completed
+      );
+      
+      res.json(updated);
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(400).json({ message: error.message });
+      }
+      throw error;
+    }
+  });
+
+  router.post('/users/:userId/missions/progress/:progressId/claim', async (req: Request, res: Response) => {
+    try {
+      const { userId, progressId } = req.params;
+      const result = await storage.claimMissionReward(
+        parseInt(progressId),
+        parseInt(userId)
+      );
+      
+      res.json(result);
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(400).json({ message: error.message });
+      }
+      throw error;
+    }
+  });
+
+  // Weekly Quests routes
+  router.get('/quests', async (req: Request, res: Response) => {
+    const quests = await storage.getWeeklyQuests();
+    res.json(quests);
+  });
+
+  router.get('/quests/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const quest = await storage.getWeeklyQuest(parseInt(id));
+    
+    if (!quest) {
+      return res.status(404).json({ message: "Quest not found" });
+    }
+    
+    res.json(quest);
+  });
+
+  router.get('/users/:userId/quests', async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const progress = await storage.getUserQuestProgress(parseInt(userId));
+    res.json(progress);
+  });
+
+  router.post('/users/:userId/quests/:questId/progress', async (req: Request, res: Response) => {
+    try {
+      const { userId, questId } = req.params;
+      const { progressMax } = req.body;
+      
+      if (!progressMax) {
+        return res.status(400).json({ message: "progressMax is required" });
+      }
+      
+      const data = insertUserQuestProgressSchema.parse({
+        userId: parseInt(userId),
+        questId: parseInt(questId),
+        progress: 0,
+        progressMax: progressMax,
+        completed: false,
+        claimed: false
+      });
+      
+      const quest = await storage.getWeeklyQuest(data.questId);
+      if (!quest) {
+        return res.status(404).json({ message: "Quest not found" });
+      }
+      
+      const progress = await storage.initUserQuestProgress(data);
+      res.status(201).json(progress);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({
+          message: "Validation error",
+          errors: formatZodError(error)
+        });
+      }
+      throw error;
+    }
+  });
+
+  router.put('/users/:userId/quests/progress/:progressId', async (req: Request, res: Response) => {
+    try {
+      const { userId, progressId } = req.params;
+      const { progress, completed } = req.body;
+      
+      const updated = await storage.updateQuestProgress(
+        parseInt(progressId),
+        progress,
+        completed
+      );
+      
+      res.json(updated);
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(400).json({ message: error.message });
+      }
+      throw error;
+    }
+  });
+
+  router.post('/users/:userId/quests/progress/:progressId/claim', async (req: Request, res: Response) => {
+    try {
+      const { userId, progressId } = req.params;
+      const result = await storage.claimQuestReward(
+        parseInt(progressId),
+        parseInt(userId)
+      );
+      
+      res.json(result);
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(400).json({ message: error.message });
+      }
+      throw error;
+    }
+  });
+
+  // Staking Vaults routes
+  router.get('/vaults', async (req: Request, res: Response) => {
+    const vaults = await storage.getStakingVaults();
+    res.json(vaults);
+  });
+
+  router.get('/vaults/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const vault = await storage.getStakingVault(parseInt(id));
+    
+    if (!vault) {
+      return res.status(404).json({ message: "Vault not found" });
+    }
+    
+    res.json(vault);
+  });
+
+  router.get('/users/:userId/stakes', async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const stakes = await storage.getUserStakes(parseInt(userId));
+    res.json(stakes);
+  });
+
+  router.post('/users/:userId/stakes', async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+      const data = insertUserStakeSchema.parse({
+        ...req.body,
+        userId: parseInt(userId)
+      });
+      
+      const stake = await storage.stakeTokens(data);
+      res.status(201).json(stake);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({
+          message: "Validation error",
+          errors: formatZodError(error)
+        });
+      }
+      if (error instanceof Error) {
+        return res.status(400).json({ message: error.message });
+      }
+      throw error;
+    }
+  });
+
+  router.post('/users/:userId/stakes/:stakeId/unstake', async (req: Request, res: Response) => {
+    try {
+      const { userId, stakeId } = req.params;
+      const result = await storage.unstakeTokens(
+        parseInt(stakeId),
+        parseInt(userId)
+      );
+      
+      res.json(result);
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(400).json({ message: error.message });
+      }
+      throw error;
+    }
+  });
+
+  router.post('/users/:userId/stakes/:stakeId/claim', async (req: Request, res: Response) => {
+    try {
+      const { userId, stakeId } = req.params;
+      const result = await storage.claimStakingRewards(
+        parseInt(stakeId),
+        parseInt(userId)
+      );
+      
+      res.json(result);
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(400).json({ message: error.message });
+      }
+      throw error;
+    }
+  });
+
+  // Games routes
+  router.get('/games', async (req: Request, res: Response) => {
+    const games = await storage.getGames();
+    res.json(games);
+  });
+
+  router.get('/games/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const game = await storage.getGame(parseInt(id));
+    
+    if (!game) {
+      return res.status(404).json({ message: "Game not found" });
+    }
+    
+    res.json(game);
+  });
+
+  router.get('/games/:id/leaderboard', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { limit } = req.query;
+    
+    const leaderboard = await storage.getGameLeaderboard(
+      parseInt(id),
+      limit ? parseInt(limit as string) : 10
+    );
+    
+    res.json(leaderboard);
+  });
+
+  router.get('/users/:userId/games/scores', async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const scores = await storage.getUserGameScores(parseInt(userId));
+    res.json(scores);
+  });
+
+  router.post('/users/:userId/games/:gameId/scores', async (req: Request, res: Response) => {
+    try {
+      const { userId, gameId } = req.params;
+      const { score } = req.body;
+      
+      const data = insertGameScoreSchema.parse({
+        userId: parseInt(userId),
+        gameId: parseInt(gameId),
+        score
+      });
+      
+      const game = await storage.getGame(data.gameId);
+      if (!game) {
+        return res.status(404).json({ message: "Game not found" });
+      }
+      
+      const result = await storage.submitGameScore(data);
+      res.status(201).json(result);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({
+          message: "Validation error",
+          errors: formatZodError(error)
+        });
+      }
+      throw error;
+    }
+  });
+
+  // NFT Boosters routes
+  router.get('/nfts', async (req: Request, res: Response) => {
+    const nfts = await storage.getNftBoosters();
+    res.json(nfts);
+  });
+
+  router.get('/nfts/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const nft = await storage.getNftBooster(parseInt(id));
+    
+    if (!nft) {
+      return res.status(404).json({ message: "NFT not found" });
+    }
+    
+    res.json(nft);
+  });
+
+  router.get('/users/:userId/nfts', async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const userNfts = await storage.getUserNfts(parseInt(userId));
+    res.json(userNfts);
+  });
+
+  router.post('/users/:userId/nfts', async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+      const data = insertUserNftSchema.parse({
+        ...req.body,
+        userId: parseInt(userId)
+      });
+      
+      const nft = await storage.getNftBooster(data.nftId);
+      if (!nft) {
+        return res.status(404).json({ message: "NFT not found" });
+      }
+      
+      const result = await storage.mintNft(data);
+      res.status(201).json(result);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({
+          message: "Validation error",
+          errors: formatZodError(error)
+        });
+      }
+      if (error instanceof Error) {
+        return res.status(400).json({ message: error.message });
+      }
+      throw error;
+    }
+  });
+
+  // Marketplace routes
+  router.get('/marketplace', async (req: Request, res: Response) => {
+    const items = await storage.getMarketplaceItems();
+    res.json(items);
+  });
+
+  router.get('/marketplace/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const item = await storage.getMarketplaceItem(parseInt(id));
+    
+    if (!item) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+    
+    res.json(item);
+  });
+
+  router.get('/users/:userId/purchases', async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const purchases = await storage.getUserPurchases(parseInt(userId));
+    res.json(purchases);
+  });
+
+  router.post('/users/:userId/purchases', async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+      const data = insertUserPurchaseSchema.parse({
+        ...req.body,
+        userId: parseInt(userId)
+      });
+      
+      const result = await storage.purchaseItem(data);
+      res.status(201).json(result);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({
+          message: "Validation error",
+          errors: formatZodError(error)
+        });
+      }
+      if (error instanceof Error) {
+        return res.status(400).json({ message: error.message });
+      }
+      throw error;
+    }
+  });
+
+  // Social Integration routes
+  router.get('/users/:userId/social', async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const connections = await storage.getSocialConnections(parseInt(userId));
+    res.json(connections);
+  });
+
+  router.post('/users/:userId/social', async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+      const data = insertSocialConnectionSchema.parse({
+        ...req.body,
+        userId: parseInt(userId)
+      });
+      
+      const result = await storage.connectSocial(data);
+      res.status(201).json(result);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({
+          message: "Validation error",
+          errors: formatZodError(error)
+        });
+      }
+      throw error;
+    }
+  });
+
+  router.delete('/users/:userId/social/:connectionId', async (req: Request, res: Response) => {
+    try {
+      const { userId, connectionId } = req.params;
+      const result = await storage.disconnectSocial(
+        parseInt(connectionId),
+        parseInt(userId)
+      );
+      
+      res.json({ success: result });
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(400).json({ message: error.message });
+      }
+      throw error;
+    }
+  });
+
+  // Stats routes
+  router.get('/stats', async (req: Request, res: Response) => {
+    const stats = await storage.getStats();
+    res.json(stats);
+  });
+
+  // Referral routes
+  router.get('/referrals/leaderboard', async (req: Request, res: Response) => {
+    const { limit } = req.query;
+    const leaderboard = await storage.getReferralLeaderboard(
+      limit ? parseInt(limit as string) : 5
+    );
+    
+    res.json(leaderboard);
+  });
+
+  router.get('/users/:userId/referrals', async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const referrals = await storage.getReferrals(parseInt(userId));
+    res.json(referrals);
+  });
+
+  // Mount all routes with /api prefix
+  app.use('/api', router);
+
+  const httpServer = createServer(app);
+  return httpServer;
+}
