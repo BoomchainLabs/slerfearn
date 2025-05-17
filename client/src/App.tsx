@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
 import Games from "@/pages/Games";
 import Documentation from "@/pages/Documentation";
+import TokenCreator from "@/pages/TokenCreator";
 import NotFound from "@/pages/not-found";
 import { WalletProvider } from "./hooks/useWallet.tsx";
 
@@ -15,6 +16,7 @@ function Router() {
       <Route path="/" component={Home}/>
       <Route path="/games" component={Games}/>
       <Route path="/docs" component={Documentation}/>
+      <Route path="/token-creator" component={TokenCreator}/>
       <Route component={NotFound} />
     </Switch>
   );
