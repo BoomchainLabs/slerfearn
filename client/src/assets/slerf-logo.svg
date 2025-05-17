@@ -1,7 +1,38 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="256" cy="256" r="248" fill="#242535" stroke="#9C27B0" stroke-width="16"/>
-  <path d="M118 170C118 156.745 128.745 146 142 146H370C383.255 146 394 156.745 394 170V194C394 207.255 383.255 218 370 218H142C128.745 218 118 207.255 118 194V170Z" fill="#9C27B0"/>
-  <path d="M118 244C118 230.745 128.745 220 142 220H292C305.255 220 316 230.745 316 244V268C316 281.255 305.255 292 292 292H142C128.745 292 118 281.255 118 268V244Z" fill="#00BCD4"/>
-  <path d="M118 318C118 304.745 128.745 294 142 294H370C383.255 294 394 304.745 394 318V342C394 355.255 383.255 366 370 366H142C128.745 366 118 355.255 118 342V318Z" fill="#FF9800"/>
+  <!-- Gradient definitions -->
+  <defs>
+    <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E90FF" /> <!-- Electric Blue -->
+      <stop offset="100%" stop-color="#39FF14" /> <!-- Neon Green -->
+    </linearGradient>
+    <linearGradient id="secondaryGradient" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#39FF14" /> <!-- Neon Green -->
+      <stop offset="100%" stop-color="#1E90FF" /> <!-- Electric Blue -->
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Background circle with deep space black -->
+  <circle cx="256" cy="256" r="230" fill="#121212" />
+  
+  <!-- Outer ring with gradient -->
+  <circle cx="256" cy="256" r="215" stroke="url(#primaryGradient)" stroke-width="12" fill="none" />
+  
+  <!-- Dynamic S shape with flow elements -->
+  <path d="M320 186C320 155.072 294.928 130 264 130H200C183.431 130 170 143.431 170 160C170 176.569 183.431 190 200 190H264C261.791 190 260 191.791 260 194V222C260 222 190 222 190 222C159.072 222 134 247.072 134 278C134 308.928 159.072 334 190 334H254C270.569 334 284 320.569 284 304C284 287.431 270.569 274 254 274H190C192.209 274 194 272.209 194 270V242C194 242 264 242 264 242C294.928 242 320 216.928 320 186Z" fill="url(#secondaryGradient)" filter="url(#glow)" />
+  
+  <!-- Connecting nodes/circuits -->
+  <circle cx="200" cy="160" r="6" fill="#C0C0C0" />
+  <circle cx="264" cy="194" r="6" fill="#C0C0C0" />
+  <circle cx="190" cy="270" r="6" fill="#C0C0C0" />
+  <circle cx="254" cy="304" r="6" fill="#C0C0C0" />
+  
+  <!-- Digital flow lines -->
+  <path d="M200 160L264 194" stroke="#C0C0C0" stroke-width="2" stroke-dasharray="4 2" />
+  <path d="M264 194L190 270" stroke="#C0C0C0" stroke-width="2" stroke-dasharray="4 2" />
+  <path d="M190 270L254 304" stroke="#C0C0C0" stroke-width="2" stroke-dasharray="4 2" />
 </svg>
