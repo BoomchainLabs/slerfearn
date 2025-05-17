@@ -38,25 +38,59 @@ const prompt = (question, defaultValue) => {
 // Helper function to execute shell commands
 const executeCommand = (command) => {
   return new Promise((resolve, reject) => {
-    console.log(`Executing: ${command}`);
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error: ${error.message}`);
-        reject(error);
-        return;
-      }
-      if (stderr) {
-        console.warn(`Warning: ${stderr}`);
-      }
-      resolve(stdout);
-    });
+    if (Array.isArray(command)) {
+      // Safe execution with array of arguments
+      const cmd = command[0];
+      const args = command.slice(1);
+      console.log(`Executing: ${cmd} ${args.join(' ')}`);
+      
+      const childProcess = require('child_process').spawn(cmd, args);
+      let stdout = '';
+      let stderr = '';
+      
+      childProcess.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+      
+      childProcess.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+      
+      childProcess.on('close', (code) => {
+        if (code !== 0) {
+          console.error(`Error: Process exited with code ${code}`);
+          console.warn(`Warning: ${stderr}`);
+          reject(new Error(stderr || `Process exited with code ${code}`));
+          return;
+        }
+        if (stderr) {
+          console.warn(`Warning: ${stderr}`);
+        }
+        resolve(stdout);
+      });
+    } else {
+      // Legacy string command execution with warning
+      console.warn('Warning: Using string command execution is deprecated and may be unsafe');
+      console.log(`Executing: ${command}`);
+      exec(command, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error: ${error.message}`);
+          reject(error);
+          return;
+        }
+        if (stderr) {
+          console.warn(`Warning: ${stderr}`);
+        }
+        resolve(stdout);
+      });
+    }
   });
 };
 
 // Check if Solana CLI is installed
 const checkSolanaCLI = async () => {
   try {
-    await executeCommand('solana --version');
+    await executeCommand(['solana', '--version']);
     return true;
   } catch (error) {
     console.error('Solana CLI is not installed or not found in PATH');
@@ -68,7 +102,7 @@ const checkSolanaCLI = async () => {
 // Check current Solana network configuration
 const checkSolanaNetwork = async () => {
   try {
-    const output = await executeCommand('solana config get');
+    const output = await executeCommand(['solana', 'config', 'get']);
     const networkMatch = output.match(/RPC URL: (https?:\/\/[^\s]+)/);
     if (networkMatch) {
       const url = networkMatch[1];
@@ -86,7 +120,7 @@ const checkSolanaNetwork = async () => {
 // Set Solana network
 const setSolanaNetwork = async (network) => {
   try {
-    await executeCommand(`solana config set --url ${network}`);
+    await executeCommand(['solana', 'config', 'set', '--url', network]);
     console.log(`Network set to ${network}`);
     return true;
   } catch (error) {
@@ -98,7 +132,7 @@ const setSolanaNetwork = async (network) => {
 // Verify nonce account exists and get its details
 const verifyNonceAccount = async (nonceAccount) => {
   try {
-    const output = await executeCommand(`solana nonce-account ${nonceAccount}`);
+    const output = await executeCommand(['solana', 'nonce-account', nonceAccount]);
     console.log('Nonce account verified successfully');
     
     // Extract balance information from output
@@ -153,7 +187,7 @@ const verifyRecipientAddress = async (address) => {
   
   // Further validation by checking if the address exists on-chain
   try {
-    await executeCommand(`solana account ${address}`);
+    await executeCommand(['solana', 'account', address]);
     console.log('Recipient address verified successfully');
     return true;
   } catch (error) {
@@ -166,9 +200,16 @@ const verifyRecipientAddress = async (address) => {
 // Perform the nonce withdrawal
 const performNonceWithdrawal = async (nonceAccount, recipientAddress, authorityPath) => {
   try {
-    const output = await executeCommand(
-      `solana nonce withdraw ${nonceAccount} ${recipientAddress} --authority ${authorityPath} --json`
-    );
+    const output = await executeCommand([
+      'solana', 
+      'nonce', 
+      'withdraw', 
+      nonceAccount, 
+      recipientAddress, 
+      '--authority', 
+      authorityPath, 
+      '--json'
+    ]);
     
     try {
       const result = JSON.parse(output);
