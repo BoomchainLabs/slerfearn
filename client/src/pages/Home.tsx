@@ -15,7 +15,7 @@ import slerfLogo from '@/assets/slerf-logo.svg';
 import { fetchTokenData, fetchStakingInfo, fetchExchanges, fetchNFTCollections } from '@/lib/api';
 import { TokenData, StakingInfo, Exchange } from '@/lib/api';
 import TransactionExplorer from '@/components/TransactionExplorer';
-import TokenPriceChart from '@/components/TokenPriceChart';
+import CyberTokenChart from '@/components/CyberTokenChart';
 import DailyTasks from '@/components/DailyTasks';
 
 // Initial data states for before the real data loads
