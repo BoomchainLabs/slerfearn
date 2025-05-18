@@ -34,6 +34,7 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
+  const [networkFilter, setNetworkFilter] = useState<string | null>(null);
   const [selectedTransaction, setSelectedTransaction] = useState<BlockchainTransaction | null>(null);
   const [isLive, setIsLive] = useState(liveUpdates);
   const transactionsContainerRef = useRef<HTMLDivElement>(null);
@@ -42,7 +43,7 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const txs = await getRecentTransactions(maxTransactions);
+        const txs = await getRecentTransactions(maxTransactions, networkFilter || undefined);
         setTransactions(txs);
         setFilteredTransactions(txs);
         setLoading(false);
@@ -58,7 +59,7 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
     };
 
     fetchTransactions();
-  }, [maxTransactions, toast]);
+  }, [maxTransactions, networkFilter, toast]);
 
   // Subscribe to new transactions
   useEffect(() => {
