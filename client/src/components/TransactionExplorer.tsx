@@ -485,9 +485,7 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
               ) : (
                 <div className="flex flex-col items-center justify-center h-full p-4">
                   <div className="text-white/60 text-center mb-2">Select a transaction to view details</div>
-                  <AnimatedCatLogo size={80} colors={[
-                    'from-[hsl(var(--primary))] to-[hsl(var(--secondary))]',
-                  ]} />
+                  <SLERFAnimatedLogo size={80} interval={3000} />
                 </div>
               )}
             </div>

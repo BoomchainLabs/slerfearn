@@ -635,10 +635,35 @@ const Home: React.FC = () => {
         </div>
       </section>
       
-      {/* Transaction Explorer Section */}
+      {/* Analytics Dashboard Section */}
       <section className="py-16 bg-gradient-to-b from-transparent to-[rgba(149,59,255,0.07)]">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-audiowide mb-4 text-white">
+              $LERF <span className="text-[hsl(var(--cyber-blue))]">ANALYTICS</span> DASHBOARD
+            </h2>
+            <p className="text-lg text-white/70 max-w-3xl mx-auto">
+              Track the performance of $LERF token in real-time with our interactive charts and analytics tools.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+            <div className="lg:col-span-2">
+              {/* Token Price Chart Component */}
+              <CyberTokenChart 
+                priceHistory={tokenData.priceHistory || []}
+                loading={loading.token}
+                symbol="LERF"
+                className="h-full"
+              />
+            </div>
+            <div>
+              {/* Daily Tasks Component */}
+              <DailyTasks className="h-full" />
+            </div>
+          </div>
+          
+          <div className="text-center mb-12 mt-16">
             <h2 className="text-3xl md:text-4xl font-audiowide mb-4 text-white">
               LIVE <span className="text-[hsl(var(--cyber-blue))]">BLOCKCHAIN</span> EXPLORER
             </h2>
