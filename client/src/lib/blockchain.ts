@@ -85,12 +85,12 @@ export const getRecentTransactions = async (
       
       // Determine transaction type
       const txType = isCrossChain 
-        ? 'cross-chain' 
+        ? 'cross-chain' as const
         : isToken 
-          ? 'token' 
+          ? 'token' as const
           : isContract 
-            ? 'contract' 
-            : 'transfer';
+            ? 'contract' as const
+            : 'transfer' as const;
       
       // Value range depends on network (Base has lower values due to gas efficiency)
       const maxValue = selectedNetwork === 'Base' ? 5 : 10;
@@ -99,7 +99,7 @@ export const getRecentTransactions = async (
       ).toString();
       
       // Get destination network for cross-chain transactions
-      let destinationNetwork = null;
+      let destinationNetwork: string | undefined = undefined;
       if (isCrossChain) {
         const availableNetworks = networks.filter(n => n !== selectedNetwork);
         destinationNetwork = availableNetworks[Math.floor(Math.random() * availableNetworks.length)];
