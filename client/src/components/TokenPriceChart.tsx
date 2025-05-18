@@ -13,7 +13,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PricePoint } from '@/lib/api';
-import AnimatedCatLogo from './AnimatedCatLogo';
+import SLERFAnimatedLogo from './SLERFAnimatedLogo';
 
 interface TokenPriceChartProps {
   priceHistory: PricePoint[];
@@ -33,7 +33,7 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({
   const [chartData, setChartData] = useState<PricePoint[]>([]);
   const [gridLines, setGridLines] = useState<number[]>([]);
   
-  // Filter data based on selected time range
+  // Filter and enhance data based on selected time range
   useEffect(() => {
     if (!priceHistory.length) return;
     
@@ -74,16 +74,86 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({
       }
     }
     
-    setChartData(filteredData);
+    // Generate more granular data points for smoother chart
+    // This creates intermediate points between existing ones for more realistic visualization
+    if (filteredData.length > 1) {
+      const enhancedData: PricePoint[] = [];
+      
+      for (let i = 0; i < filteredData.length - 1; i++) {
+        const current = filteredData[i];
+        const next = filteredData[i + 1];
+        
+        // Add the current point
+        enhancedData.push(current);
+        
+        // Calculate time and price differences between current and next points
+        const timeDiff = next.timestamp - current.timestamp;
+        const priceDiff = next.price - current.price;
+        
+        // Don't interpolate if the points are too close in time
+        if (timeDiff > 5 * 60 * 1000) { // If more than 5 minutes apart
+          // Calculate number of intermediate points based on time difference
+          // More points for longer time differences
+          const numIntermediatePoints = Math.min(
+            5, // Maximum 5 intermediate points
+            Math.ceil(timeDiff / (60 * 60 * 1000)) // Roughly 1 point per hour
+          );
+          
+          // Determine if this is a volatile period 
+          // (large price change relative to price level)
+          const volatility = Math.abs(priceDiff / current.price);
+          const isVolatile = volatility > 0.01; // >1% change
+          
+          // Create intermediate points with realistic market microstructure
+          for (let j = 1; j <= numIntermediatePoints; j++) {
+            const ratio = j / (numIntermediatePoints + 1);
+            
+            // Base interpolation with realistic noise
+            // More pronounced noise during volatile periods
+            const noise = isVolatile 
+              ? (Math.random() - 0.5) * 0.015 * current.price 
+              : (Math.random() - 0.5) * 0.003 * current.price;
+            
+            // Apply market microstructure effects:
+            // In trending markets, prices tend to move in steps with some reversion
+            const trendNoise = isVolatile
+              ? Math.random() * priceDiff * 0.2 * (Math.random() > 0.7 ? -1 : 1)
+              : 0;
+            
+            // Calculate the intermediate timestamp and price
+            const timestamp = current.timestamp + Math.round(timeDiff * ratio);
+            const basePrice = current.price + (priceDiff * ratio);
+            const price = basePrice + noise + trendNoise;
+            
+            // Add the intermediate point
+            enhancedData.push({
+              timestamp,
+              price: Math.max(0.00000001, price) // Ensure price is positive
+            });
+          }
+        }
+      }
+      
+      // Add the last original point
+      enhancedData.push(filteredData[filteredData.length - 1]);
+      
+      // Sort by timestamp just to be safe
+      enhancedData.sort((a, b) => a.timestamp - b.timestamp);
+      
+      // Update with enhanced data
+      setChartData(enhancedData);
+    } else {
+      setChartData(filteredData);
+    }
     
     // Calculate grid lines for Y axis based on price range
     if (filteredData.length > 0) {
-      const minPrice = Math.min(...filteredData.map(d => d.price));
-      const maxPrice = Math.max(...filteredData.map(d => d.price));
+      const minPrice = Math.min(...filteredData.map(d => d.price)) * 0.995; // Add some padding
+      const maxPrice = Math.max(...filteredData.map(d => d.price)) * 1.005;
       const priceDiff = maxPrice - minPrice;
       
       const lines = [];
-      const segmentCount = 4;
+      const segmentCount = 5; // Increase number of grid lines for more detail
       
       for (let i = 0; i <= segmentCount; i++) {
         lines.push(minPrice + (priceDiff * i / segmentCount));
@@ -288,7 +358,8 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({
                   activeDot={<CustomDot />}
                   dot={<CustomDot />}
                   isAnimationActive={true}
-                  animationDuration={500}
+                  animationDuration={800}
+                  connectNulls={true}
                 />
                 {hoverData && (
                   <ReferenceLine 
