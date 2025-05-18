@@ -13,6 +13,8 @@ import cyberCatLogo from '@/assets/cyber-cat-logo.svg';
 import { fetchTokenData, fetchStakingInfo, fetchExchanges, fetchNFTCollections } from '@/lib/api';
 import { TokenData, StakingInfo, Exchange } from '@/lib/api';
 import TransactionExplorer from '@/components/TransactionExplorer';
+import TokenPriceChart from '@/components/TokenPriceChart';
+import DailyTasks from '@/components/DailyTasks';
 
 // Initial data states for before the real data loads
 const initialTokenData: TokenData = {
