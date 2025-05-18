@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Space+Grotesk:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import url('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css');
 
 @tailwind base;
@@ -6,33 +6,43 @@
 @tailwind utilities;
 
 :root {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --primary: 24 90% 70%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 240 4.5% 20%;
-  --secondary-foreground: 0 0% 95%;
-  --accent: 240 5% 25%;
-  --accent-foreground: 0 0% 96%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
-  --ring: 240 4.9% 83.9%;
-  --radius: 0.5rem;
+  /* Main theme colors - cyberpunk-inspired futuristic palette */
+  --background: 230 25% 5%;
+  --foreground: 210 40% 98%;
+  --muted: 232 14% 15%;
+  --muted-foreground: 217 33% 70%;
+  --popover: 230 25% 5%;
+  --popover-foreground: 210 40% 98%;
+  --card: 230 25% 7%;
+  --card-foreground: 210 40% 98%;
+  --border: 232 14% 15%;
+  --input: 232 14% 15%;
+  
+  /* Primary: Neon Blue */
+  --primary: 195 100% 50%;
+  --primary-foreground: 0 0% 100%;
+  
+  /* Secondary: Vibrant Purple */
+  --secondary: 265 89% 60%; 
+  --secondary-foreground: 0 0% 100%;
+  
+  /* Accent: Electric Green */
+  --accent: 135 98% 58%;
+  --accent-foreground: 230 25% 10%;
+  
+  --destructive: 0 100% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --ring: 195 100% 50%;
+  --radius: 0.375rem;
 
-  /* Custom Slerf colors */
-  --slerf-orange: 24 100% 58%;
-  --slerf-purple: 270 64% 55%;
-  --slerf-cyan: 187 100% 50%;
-  --slerf-dark: 240 10% 8%;
-  --slerf-light: 210 20% 98%;
+  /* Custom theme colors */
+  --web3-blue: 195 100% 50%;
+  --web3-purple: 265 89% 60%;
+  --web3-green: 135 98% 58%;
+  --web3-pink: 330 100% 65%;
+  --web3-yellow: 40 100% 60%;
+  --web3-dark: 230 25% 5%;
+  --web3-light: 210 40% 98%;
 }
 
 @layer base {
@@ -41,14 +51,42 @@
   }
 
   body {
-    @apply bg-background text-foreground font-inter;
+    @apply bg-background text-foreground font-roboto;
   }
 }
 
+/* Neo-futuristic glass effect */
 .glass {
-  @apply bg-white/[0.03] backdrop-blur-xl border border-white/[0.05];
+  @apply bg-white/[0.05] backdrop-blur-xl border border-white/[0.08] relative;
 }
 
+.glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+/* Cyberpunk-style cards */
+.cyber-card {
+  @apply relative overflow-hidden bg-gradient-to-br from-black/80 to-black/50 border border-white/10;
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.cyber-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
+}
+
+/* Hover effects for cards */
 .mission-card:hover,
 .quest-card:hover,
 .game-card:hover {
@@ -57,32 +95,56 @@
 }
 
 .mission-card:hover {
-  box-shadow: 0 10px 25px rgba(255, 107, 42, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 195, 255, 0.2);
 }
 
 .quest-card:hover {
-  box-shadow: 0 10px 25px rgba(155, 81, 224, 0.2);
+  box-shadow: 0 10px 25px rgba(149, 59, 255, 0.2);
 }
 
 .game-card:hover {
-  box-shadow: 0 10px 25px rgba(1, 210, 255, 0.2);
+  box-shadow: 0 10px 25px rgba(38, 255, 123, 0.2);
 }
 
+/* Neon glow effects */
+.neon-blue-glow {
+  box-shadow: 0 0 15px rgba(0, 195, 255, 0.6), 0 0 30px rgba(0, 195, 255, 0.3);
+}
+
+.neon-purple-glow {
+  box-shadow: 0 0 15px rgba(149, 59, 255, 0.6), 0 0 30px rgba(149, 59, 255, 0.3);
+}
+
+.neon-green-glow {
+  box-shadow: 0 0 15px rgba(38, 255, 123, 0.6), 0 0 30px rgba(38, 255, 123, 0.3);
+}
+
+/* Futuristic animations */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
 
-.font-space {
-  font-family: 'Space Grotesk', sans-serif;
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }
 
-.font-inter {
-  font-family: 'Inter', sans-serif;
+/* Typography */
+.font-orbitron {
+  font-family: 'Orbitron', sans-serif;
+}
+
+.font-roboto {
+  font-family: 'Roboto', sans-serif;
 }
 
 .font-mono {
