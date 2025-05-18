@@ -1,269 +1,252 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
-import { FileText, BookOpen, Book, ExternalLink, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
+import SLERFAnimatedLogo from './SLERFAnimatedLogo';
 
-interface GitBookDocsProps {
-  space?: string;
-  defaultPage?: string;
-  title?: string;
-  description?: string;
-}
-
-interface GitBookContent {
+interface DocItem {
+  id: string;
   title: string;
   description: string;
-  content: string;
-  pages: GitBookPage[];
-  path: string;
+  url: string;
+  type: 'guide' | 'api' | 'tutorial';
+  lastUpdated: string;
 }
 
-interface GitBookPage {
-  title: string;
-  path: string;
-  type: string;
-  uid: string;
-  description?: string;
-  children?: GitBookPage[];
+const SAMPLE_DOCS: DocItem[] = [
+  {
+    id: 'doc-1',
+    title: 'Getting Started with $LERF',
+    description: 'Learn the basics of $LERF token and how to get started with staking',
+    url: 'https://docs.slerf.io/getting-started',
+    type: 'guide',
+    lastUpdated: '2025-05-12'
+  },
+  {
+    id: 'doc-2',
+    title: 'Staking Mechanisms',
+    description: 'Detailed explanation of staking rewards and lock periods',
+    url: 'https://docs.slerf.io/staking',
+    type: 'guide',
+    lastUpdated: '2025-05-10'
+  },
+  {
+    id: 'doc-3',
+    title: 'Cross-Chain Bridge',
+    description: 'How to use the Base to Ethereum bridge for $LERF tokens',
+    url: 'https://docs.slerf.io/bridge',
+    type: 'tutorial',
+    lastUpdated: '2025-05-15'
+  },
+  {
+    id: 'doc-4',
+    title: 'Token API Reference',
+    description: 'Complete API documentation for $LERF token integration',
+    url: 'https://docs.slerf.io/api/token',
+    type: 'api',
+    lastUpdated: '2025-05-11'
+  },
+  {
+    id: 'doc-5',
+    title: 'NFT Integration Guide',
+    description: 'Learn how to integrate SLERF NFTs with your application',
+    url: 'https://docs.slerf.io/nft/integration',
+    type: 'api',
+    lastUpdated: '2025-05-14'
+  }
+];
+
+interface GitBookDocsProps {
+  className?: string;
 }
 
-const GitBookDocs: React.FC<GitBookDocsProps> = ({
-  space = '0d5fcb106c-hosting',
-  defaultPage = '',
-  title = '$LERF Documentation',
-  description = 'Official documentation for the $LERF token ecosystem'
-}) => {
+const GitBookDocs: React.FC<GitBookDocsProps> = ({ className = "" }) => {
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(true);
-  const [content, setContent] = useState<GitBookContent | null>(null);
-  const [navigation, setNavigation] = useState<GitBookPage[]>([]);
-  const [currentPath, setCurrentPath] = useState<string>(defaultPage);
-  const [breadcrumbs, setBreadcrumbs] = useState<{title: string, path: string}[]>([]);
-
-  // Function to fetch GitBook content
-  const fetchGitBookContent = async (path: string) => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`/api/gitbook?space=${space}&path=${path}`);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch GitBook content: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      setContent(data);
-      
-      if (!navigation.length && data.pages) {
-        setNavigation(data.pages);
-      }
-      
-      // Update breadcrumbs
-      const pathParts = path.split('/');
-      const newBreadcrumbs = [];
-      let currentPath = '';
-      
-      for (const part of pathParts) {
-        if (!part) continue;
-        currentPath += (currentPath ? '/' : '') + part;
-        
-        // Find the title for this path part by searching through navigation
-        const findPageTitle = (pages: GitBookPage[], targetPath: string): string | undefined => {
-          for (const page of pages) {
-            if (page.path === targetPath) {
-              return page.title;
-            }
-            if (page.children) {
-              const title = findPageTitle(page.children, targetPath);
-              if (title) return title;
-            }
-          }
-          return undefined;
-        };
-        
-        const title = findPageTitle(navigation, currentPath) || part;
-        newBreadcrumbs.push({ title, path: currentPath });
-      }
-      
-      setBreadcrumbs(newBreadcrumbs.length ? newBreadcrumbs : [{ title: 'Home', path: '' }]);
-      
-    } catch (error) {
-      console.error('Error fetching GitBook content:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load documentation. Please try again later.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Initial fetch
+  const [loading, setLoading] = useState(true);
+  const [docs, setDocs] = useState<DocItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState<string>('all');
+  const [filteredDocs, setFilteredDocs] = useState<DocItem[]>([]);
+  
+  // Load documentation
   useEffect(() => {
-    fetchGitBookContent(currentPath);
-  }, [currentPath]);
-
-  // Function to render navigation menu recursively
-  const renderNavigation = (pages: GitBookPage[], depth = 0) => {
-    return pages.map((page) => (
-      <div key={page.uid} className={`ml-${depth * 4}`}>
-        <Button
-          variant="ghost"
-          className={`w-full justify-start text-left ${page.path === currentPath ? 'bg-slerf-dark-lighter text-slerf-cyan' : ''}`}
-          onClick={() => setCurrentPath(page.path)}
-        >
-          {page.type === 'group' ? <Book className="h-4 w-4 mr-2" /> : <FileText className="h-4 w-4 mr-2" />}
-          <span className="truncate">{page.title}</span>
-        </Button>
-        {page.children && page.children.length > 0 && (
-          <div className="mt-1 mb-2">
-            {renderNavigation(page.children, depth + 1)}
-          </div>
-        )}
-      </div>
-    ));
-  };
-
-  // Function to sanitize and render HTML content safely
-  const renderContent = (htmlContent: string) => {
-    return { __html: htmlContent };
-  };
-
-  // Navigate to sibling pages
-  const navigateSibling = (direction: 'next' | 'prev') => {
-    // Find the current page in the flat navigation structure
-    const flattenNavigation = (pages: GitBookPage[]): GitBookPage[] => {
-      return pages.reduce((acc, page) => {
-        acc.push(page);
-        if (page.children && page.children.length) {
-          acc.push(...flattenNavigation(page.children));
-        }
-        return acc;
-      }, [] as GitBookPage[]);
+    const fetchDocs = async () => {
+      try {
+        // Simulate API call to GitBook
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setDocs(SAMPLE_DOCS);
+      } catch (error) {
+        console.error('Error fetching GitBook docs:', error);
+        toast({
+          variant: "destructive",
+          title: "Failed to load documentation",
+          description: "Could not connect to GitBook API. Please try again later."
+        });
+      } finally {
+        setLoading(false);
+      }
     };
     
-    const allPages = flattenNavigation(navigation);
-    const currentIndex = allPages.findIndex(page => page.path === currentPath);
+    fetchDocs();
+  }, [toast]);
+  
+  // Filter docs based on search query and active tab
+  useEffect(() => {
+    let filtered = [...docs];
     
-    if (currentIndex > -1) {
-      const targetIndex = direction === 'next' 
-        ? Math.min(currentIndex + 1, allPages.length - 1)
-        : Math.max(currentIndex - 1, 0);
-        
-      if (targetIndex !== currentIndex) {
-        setCurrentPath(allPages[targetIndex].path);
-      }
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        doc => 
+          doc.title.toLowerCase().includes(query) ||
+          doc.description.toLowerCase().includes(query)
+      );
     }
+    
+    // Apply tab filter
+    if (activeTab !== 'all') {
+      filtered = filtered.filter(doc => doc.type === activeTab);
+    }
+    
+    setFilteredDocs(filtered);
+  }, [docs, searchQuery, activeTab]);
+  
+  // Format date string
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
   };
-
+  
   return (
-    <Card className="w-full bg-slerf-dark-light border-slerf-dark-lighter">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {/* Navigation Sidebar */}
-          <div className="md:col-span-1 bg-slerf-dark rounded-lg p-4 max-h-[70vh] overflow-y-auto">
-            <h3 className="text-lg font-medium mb-4 flex items-center">
-              <BookOpen className="h-5 w-5 mr-2" /> Documentation
-            </h3>
-            {isLoading && !navigation.length ? (
-              <div className="space-y-2">
-                {[...Array(5)].map((_, i) => (
-                  <Skeleton key={i} className="h-8 w-full" />
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-1">
-                {renderNavigation(navigation)}
-              </div>
-            )}
+    <Card className={`cyber-card p-0.5 rounded-xl overflow-hidden ${className}`}>
+      <div className="bg-black/80 rounded-lg p-4 h-full flex flex-col">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center">
+            <SLERFAnimatedLogo size={32} interval={8000} />
+            <h3 className="ml-3 text-lg font-audiowide text-white">Documentation</h3>
           </div>
-          
-          {/* Content Area */}
-          <div className="md:col-span-3">
-            {/* Breadcrumb Navigation */}
-            <div className="flex items-center mb-4 text-sm overflow-x-auto pb-2 scrollbar-thin">
-              {breadcrumbs.map((crumb, index) => (
-                <React.Fragment key={crumb.path}>
-                  {index > 0 && <span className="mx-2 text-gray-400">/</span>}
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-slerf-cyan"
-                    onClick={() => setCurrentPath(crumb.path)}
-                  >
-                    {crumb.title}
-                  </Button>
-                </React.Fragment>
+          <div className="text-xs text-white/60 font-mono">
+            POWERED BY GITBOOK
+          </div>
+        </div>
+        
+        <div className="mb-4">
+          <Input
+            placeholder="Search documentation..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="bg-black/30 border-white/10 text-white"
+          />
+        </div>
+        
+        <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveTab}>
+          <TabsList className="bg-black/30 border border-white/10 w-full">
+            <TabsTrigger 
+              value="all"
+              className="flex-1 data-[state=active]:bg-[hsl(var(--cyber-blue))] data-[state=active]:text-white"
+            >
+              All Docs
+            </TabsTrigger>
+            <TabsTrigger 
+              value="guide"
+              className="flex-1 data-[state=active]:bg-[hsl(var(--cyber-blue))] data-[state=active]:text-white"
+            >
+              Guides
+            </TabsTrigger>
+            <TabsTrigger 
+              value="api"
+              className="flex-1 data-[state=active]:bg-[hsl(var(--cyber-blue))] data-[state=active]:text-white"
+            >
+              API Docs
+            </TabsTrigger>
+            <TabsTrigger 
+              value="tutorial"
+              className="flex-1 data-[state=active]:bg-[hsl(var(--cyber-blue))] data-[state=active]:text-white"
+            >
+              Tutorials
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+        
+        <div className="flex-grow overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+          {loading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => (
+                <Skeleton key={i} className="h-24 w-full rounded-lg" />
               ))}
             </div>
-            
-            {/* Content Display */}
-            <div className="bg-slerf-dark rounded-lg p-6">
-              {isLoading ? (
-                <div className="space-y-4">
-                  <Skeleton className="h-8 w-3/4" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-5/6" />
-                  <Skeleton className="h-20 w-full" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-4/5" />
-                </div>
-              ) : content ? (
-                <div>
-                  <h1 className="text-2xl font-bold mb-4">{content.title}</h1>
-                  {content.description && (
-                    <p className="text-gray-400 mb-6">{content.description}</p>
-                  )}
-                  <div 
-                    className="gitbook-content prose prose-invert max-w-none"
-                    dangerouslySetInnerHTML={renderContent(content.content)}
-                  />
+          ) : filteredDocs.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-48 text-center">
+              <div className="text-white/50 mb-2">No documentation found</div>
+              <div className="text-sm text-white/30">
+                {searchQuery 
+                  ? `No results for "${searchQuery}". Try a different search term.` 
+                  : 'No documentation available for this category.'}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredDocs.map(doc => (
+                <div 
+                  key={doc.id}
+                  className="p-4 bg-black/40 rounded-lg border border-white/5 hover:border-white/20 transition-all hover:bg-black/60"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-medium text-white">{doc.title}</h4>
+                    <span className={`ml-2 text-xs py-0.5 px-2 rounded ${
+                      doc.type === 'api' 
+                        ? 'bg-[hsl(var(--cyber-blue))/20] text-[hsl(var(--cyber-blue))]' 
+                        : doc.type === 'tutorial'
+                          ? 'bg-[hsl(var(--cyber-pink))/20] text-[hsl(var(--cyber-pink))]'
+                          : 'bg-[hsl(var(--cyber-purple))/20] text-[hsl(var(--cyber-purple))]'
+                    }`}>
+                      {doc.type.charAt(0).toUpperCase() + doc.type.slice(1)}
+                    </span>
+                  </div>
                   
-                  {/* Pagination */}
-                  <div className="flex justify-between mt-8 pt-4 border-t border-slerf-dark-lighter">
+                  <p className="text-sm text-white/70 mb-3">{doc.description}</p>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-white/40">
+                      Updated: {formatDate(doc.lastUpdated)}
+                    </span>
                     <Button 
-                      variant="outline" 
-                      onClick={() => navigateSibling('prev')}
-                      disabled={breadcrumbs.length <= 1}
+                      size="sm"
+                      variant="outline"
+                      className="text-[hsl(var(--cyber-blue))] border-[hsl(var(--cyber-blue))] hover:bg-[hsl(var(--cyber-blue))/10]"
+                      onClick={() => window.open(doc.url, '_blank')}
                     >
-                      <ArrowLeft className="h-4 w-4 mr-2" /> Previous
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => navigateSibling('next')}
-                    >
-                      Next <ArrowRight className="h-4 w-4 ml-2" />
+                      View Doc
                     </Button>
                   </div>
                 </div>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-gray-400">Documentation content not found.</p>
-                </div>
-              )}
+              ))}
             </div>
-            
-            {/* External Link */}
-            <div className="mt-4 text-right">
-              <Button 
-                variant="link" 
-                className="text-gray-400 text-sm"
-                onClick={() => window.open(`https://${space}.gitbook.io/${currentPath}`, '_blank')}
-              >
-                View on GitBook <ExternalLink className="h-3 w-3 ml-1" />
-              </Button>
-            </div>
-          </div>
+          )}
         </div>
-      </CardContent>
+        
+        <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center">
+          <span className="text-xs text-white/50">
+            SLERF Documentation v1.2.5
+          </span>
+          <Button 
+            size="sm"
+            variant="default"
+            className="bg-gradient-to-r from-[hsl(var(--cyber-blue))] to-[hsl(var(--cyber-purple))] hover:opacity-90"
+            onClick={() => window.open('https://docs.slerf.io', '_blank')}
+          >
+            Full Documentation
+          </Button>
+        </div>
+      </div>
     </Card>
   );
 };
