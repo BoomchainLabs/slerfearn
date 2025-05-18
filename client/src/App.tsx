@@ -4,7 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
-import Games from "@/pages/Games";
+import Analytics from "@/pages/Analytics";
 import Documentation from "@/pages/Documentation";
 import TokenCreator from "@/pages/TokenCreator";
 import ApiDocs from "@/pages/ApiDocs";
@@ -16,7 +16,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home}/>
-      <Route path="/games" component={Games}/>
+      <Route path="/analytics" component={Analytics}/>
       <Route path="/docs" component={Documentation}/>
       <Route path="/token-creator" component={TokenCreator}/>
       <Route path="/api-docs" component={ApiDocs}/>
@@ -30,10 +30,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WalletProvider>
-          <div className="min-h-screen bg-slerf-dark bg-[radial-gradient(circle_at_100%_0%,rgba(255,107,42,0.15)_0%,transparent_25%),radial-gradient(circle_at_0%_100%,rgba(155,81,224,0.15)_0%,transparent_25%)]">
+          <div className="min-h-screen bg-gradient-to-b from-[hsl(230,25%,5%)] to-[hsl(230,25%,3%)] bg-[radial-gradient(circle_at_100%_0%,rgba(0,195,255,0.15)_0%,transparent_30%),radial-gradient(circle_at_0%_100%,rgba(149,59,255,0.15)_0%,transparent_30%)]">
             <Toaster />
             <Navbar />
-            <main className="container mx-auto px-4 py-6">
+            <main className="container mx-auto px-4 py-8 pb-16">
               <Router />
             </main>
           </div>
