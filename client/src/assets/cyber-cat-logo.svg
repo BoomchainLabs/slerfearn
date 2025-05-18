@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="catGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F0FF"/>
+      <stop offset="50%" stop-color="#FF00E5"/>
+      <stop offset="100%" stop-color="#8A2BE2"/>
+    </linearGradient>
+    <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feFlood flood-color="#FF00FF" flood-opacity="0.7" result="glow1"/>
+      <feFlood flood-color="#00FFFF" flood-opacity="0.7" result="glow2"/>
+      <feComposite in="glow1" in2="blur" operator="in" result="glow1blur"/>
+      <feComposite in="glow2" in2="blur" operator="in" result="glow2blur"/>
+      <feMerge>
+        <feMergeNode in="glow1blur"/>
+        <feMergeNode in="glow2blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Cat head shape -->
+  <path d="M100,30 
+           C135,30 165,60 165,100 
+           C165,140 135,170 100,170 
+           C65,170 35,140 35,100 
+           C35,60 65,30 100,30 Z" 
+        fill="#111" stroke="url(#catGradient)" stroke-width="2"/>
+  
+  <!-- Cat ears -->
+  <path d="M70,50 L40,20 L55,60 Z" fill="#222" stroke="url(#catGradient)" stroke-width="2"/>
+  <path d="M130,50 L160,20 L145,60 Z" fill="#222" stroke="url(#catGradient)" stroke-width="2"/>
+  
+  <!-- Cat eyes -->
+  <circle cx="75" cy="90" r="15" fill="#222" stroke="url(#catGradient)" stroke-width="2"/>
+  <circle cx="125" cy="90" r="15" fill="#222" stroke="url(#catGradient)" stroke-width="2"/>
+  
+  <!-- Eye glows -->
+  <circle cx="75" cy="90" r="7" fill="#FF00E5" filter="url(#neonGlow)"/>
+  <circle cx="125" cy="90" r="7" fill="#00F0FF" filter="url(#neonGlow)"/>
+  
+  <!-- Cat nose -->
+  <polygon points="100,110 95,115 105,115" fill="#FF00E5" filter="url(#neonGlow)"/>
+  
+  <!-- Cat mouth -->
+  <path d="M75,125 Q100,140 125,125" fill="none" stroke="url(#catGradient)" stroke-width="3"/>
+  
+  <!-- Cat whiskers -->
+  <line x1="60" y1="115" x2="30" y2="105" stroke="url(#catGradient)" stroke-width="1.5"/>
+  <line x1="60" y1="125" x2="30" y2="125" stroke="url(#catGradient)" stroke-width="1.5"/>
+  <line x1="60" y1="135" x2="30" y2="145" stroke="url(#catGradient)" stroke-width="1.5"/>
+  
+  <line x1="140" y1="115" x2="170" y2="105" stroke="url(#catGradient)" stroke-width="1.5"/>
+  <line x1="140" y1="125" x2="170" y2="125" stroke="url(#catGradient)" stroke-width="1.5"/>
+  <line x1="140" y1="135" x2="170" y2="145" stroke="url(#catGradient)" stroke-width="1.5"/>
+  
+  <!-- Tech collar -->
+  <path d="M80,160 Q100,170 120,160" fill="none" stroke="url(#catGradient)" stroke-width="4"/>
+  <circle cx="100" cy="162" r="5" fill="#00F0FF" filter="url(#neonGlow)"/>
+</svg>
