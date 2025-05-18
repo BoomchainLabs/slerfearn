@@ -8,9 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useWallet } from '@/hooks/useWallet';
 import Footer from '@/components/Footer';
+import AnimatedCatLogo from '@/components/AnimatedCatLogo';
 import cyberCatLogo from '@/assets/cyber-cat-logo.svg';
 import { fetchTokenData, fetchStakingInfo, fetchExchanges, fetchNFTCollections } from '@/lib/api';
 import { TokenData, StakingInfo, Exchange } from '@/lib/api';
+import TransactionExplorer from '@/components/TransactionExplorer';
 
 // Initial data states for before the real data loads
 const initialTokenData: TokenData = {
@@ -262,14 +264,12 @@ const Home: React.FC = () => {
                 delay: 0.3 
               }}
             >
-              <div className="relative w-72 h-72 md:w-96 md:h-96">
-                <img 
-                  src={cyberCatLogo} 
-                  alt="Cyber Cat" 
-                  className="w-full h-full object-contain"
+              <div className="relative w-72 h-72 md:w-96 md:h-96 flex items-center justify-center">
+                <AnimatedCatLogo 
+                  size={300} 
+                  interval={5000} 
+                  className="absolute" 
                 />
-                <div className="absolute inset-0 rounded-full blur-xl bg-[hsl(var(--cyber-pink))] opacity-20 animate-pulse"></div>
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-[hsl(var(--cyber-pink))] to-[hsl(var(--cyber-blue))] opacity-30 animate-pulse" style={{ animationDuration: '3s' }}></div>
               </div>
             </motion.div>
           </div>
@@ -628,6 +628,26 @@ const Home: React.FC = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+      
+      {/* Transaction Explorer Section */}
+      <section className="py-16 bg-gradient-to-b from-transparent to-[rgba(149,59,255,0.07)]">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-audiowide mb-4 text-white">
+              LIVE <span className="text-[hsl(var(--cyber-blue))]">BLOCKCHAIN</span> EXPLORER
+            </h2>
+            <p className="text-lg text-white/70 max-w-3xl mx-auto">
+              Watch blockchain transactions in real-time. See token transfers, smart contract interactions, and ETH movements as they happen.
+            </p>
+          </div>
+          
+          {/* Transaction Explorer Component */}
+          <TransactionExplorer 
+            maxTransactions={8}
+            className="w-full"
+          />
         </div>
       </section>
       
