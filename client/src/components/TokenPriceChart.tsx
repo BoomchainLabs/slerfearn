@@ -250,7 +250,7 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({
       <div className="bg-black/80 rounded-lg p-4 h-full">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
-            <AnimatedCatLogo size={40} interval={12000} />
+            <SLERFAnimatedLogo size={40} interval={12000} />
             <div className="ml-3">
               <h3 className="text-lg font-audiowide text-white">{symbol} Chart</h3>
               <div className="flex items-center mt-1">
@@ -304,7 +304,7 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({
           {loading ? (
             <div className="w-full h-full flex items-center justify-center bg-black/30 rounded-lg">
               <div className="flex flex-col items-center">
-                <AnimatedCatLogo size={60} interval={800} />
+                <SLERFAnimatedLogo size={60} interval={800} />
                 <p className="mt-4 text-white/70">Loading chart data...</p>
               </div>
             </div>
@@ -323,8 +323,13 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({
                 <defs>
                   <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#953BFF" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#FF00EA" stopOpacity={0.1}/>
+                    <stop offset="50%" stopColor="#FF00EA" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#FF00EA" stopOpacity={0.05}/>
                   </linearGradient>
+                  <filter id="glow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                  </filter>
                 </defs>
                 <CartesianGrid 
                   strokeDasharray="3 3" 
@@ -360,6 +365,7 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({
                   isAnimationActive={true}
                   animationDuration={800}
                   connectNulls={true}
+                  style={{ filter: 'url(#glow)' }}
                 />
                 {hoverData && (
                   <ReferenceLine 
