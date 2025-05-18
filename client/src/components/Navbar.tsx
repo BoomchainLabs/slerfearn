@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SiGitbook } from "react-icons/si";
-import { BookOpen, Code, Coins, Gamepad2, Home, Menu, X } from "lucide-react";
+import { BookOpen, Code, Coins, BarChart3, Home, Menu, X } from "lucide-react";
 import { useWallet } from "@/hooks/useWallet";
 import {
   Sheet,
@@ -83,17 +83,17 @@ const Navbar = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <Link href="/games">
+                <Link href="/analytics">
                   <NavigationMenuLink
                     className={cn(
                       "group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
-                      location === "/games"
+                      location === "/analytics"
                         ? "bg-accent text-accent-foreground"
                         : "text-foreground/70"
                     )}
                   >
-                    <Gamepad2 className="mr-2 h-4 w-4" />
-                    Games
+                    <BarChart3 className="mr-2 h-4 w-4" />
+                    Analytics
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
@@ -206,11 +206,11 @@ const Navbar = () => {
                       Home
                     </NavItem>
                     <NavItem 
-                      href="/games" 
-                      icon={<Gamepad2 className="h-5 w-5" />}
+                      href="/analytics" 
+                      icon={<BarChart3 className="h-5 w-5" />}
                       onClick={() => setIsOpen(false)}
                     >
-                      Games
+                      Analytics
                     </NavItem>
                     <NavItem 
                       href="/docs" 
