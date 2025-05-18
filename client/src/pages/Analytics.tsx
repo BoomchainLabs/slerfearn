@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useWallet } from '@/hooks/useWallet';
 import { useToast } from '@/hooks/use-toast';
 import Footer from '@/components/Footer';
+import { BlockchainLogo, TokenLogo, Web3LogoIcon } from '@/components/Logo';
 import { motion } from 'framer-motion';
 import { 
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, 
@@ -90,9 +91,7 @@ const Analytics: React.FC = () => {
         <div className="flex flex-col items-center justify-center mb-12">
           <div className="cyber-card p-2 rounded-full mb-6">
             <div className="bg-white/10 rounded-full p-3">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[hsl(var(--web3-blue))] to-[hsl(var(--web3-purple))] flex items-center justify-center">
-                <span className="font-orbitron text-white text-2xl">W3</span>
-              </div>
+              <BlockchainLogo className="w-24 h-24" />
             </div>
           </div>
           
@@ -116,7 +115,7 @@ const Analytics: React.FC = () => {
           
           {wallet && (
             <div className="glass p-4 rounded-xl flex items-center space-x-3 mt-4">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[hsl(var(--web3-blue))] to-[hsl(var(--web3-purple))]"></div>
+              <TokenLogo symbol="W3" className="w-8 h-8" />
               <span className="text-xl font-orbitron">{wallet.balance}</span>
             </div>
           )}

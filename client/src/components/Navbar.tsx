@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { SiGitbook } from "react-icons/si";
 import { BookOpen, Code, Coins, BarChart3, Home, Menu, X } from "lucide-react";
 import { useWallet } from "@/hooks/useWallet";
+import { Web3LogoIcon, TokenLogo } from "@/components/Logo";
 import {
   Sheet,
   SheetContent,
@@ -57,8 +58,9 @@ const Navbar = () => {
           {/* Logo and Brand */}
           <Link href="/">
             <div className="flex items-center gap-2">
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-                $LERF Hub
+              <Web3LogoIcon className="w-8 h-8" />
+              <span className="text-xl font-orbitron font-bold bg-gradient-to-r from-[hsl(var(--web3-blue))] to-[hsl(var(--web3-purple))] bg-clip-text text-transparent">
+                Web3 Hub
               </span>
             </div>
           </Link>

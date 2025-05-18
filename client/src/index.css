@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Orbitron:wght@400;500;600;700&family=Chakra+Petch:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import url('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css');
 
 @tailwind base;
@@ -6,43 +6,44 @@
 @tailwind utilities;
 
 :root {
-  /* Main theme colors - cyberpunk-inspired futuristic palette */
-  --background: 230 25% 5%;
+  /* Main theme colors - cyberpunk-inspired palette */
+  --background: 270 50% 8%;
   --foreground: 210 40% 98%;
-  --muted: 232 14% 15%;
+  --muted: 272 25% 15%;
   --muted-foreground: 217 33% 70%;
-  --popover: 230 25% 5%;
+  --popover: 270 50% 8%;
   --popover-foreground: 210 40% 98%;
-  --card: 230 25% 7%;
+  --card: 270 40% 10%;
   --card-foreground: 210 40% 98%;
-  --border: 232 14% 15%;
-  --input: 232 14% 15%;
+  --border: 265 50% 20%;
+  --input: 272 25% 15%;
   
-  /* Primary: Neon Blue */
-  --primary: 195 100% 50%;
+  /* Primary: Neon Pink */
+  --primary: 320 100% 60%;
   --primary-foreground: 0 0% 100%;
   
-  /* Secondary: Vibrant Purple */
-  --secondary: 265 89% 60%; 
+  /* Secondary: Cyber Blue */
+  --secondary: 180 100% 60%; 
   --secondary-foreground: 0 0% 100%;
   
-  /* Accent: Electric Green */
-  --accent: 135 98% 58%;
-  --accent-foreground: 230 25% 10%;
+  /* Accent: Electric Purple */
+  --accent: 280 100% 65%;
+  --accent-foreground: 0 0% 100%;
   
   --destructive: 0 100% 60%;
   --destructive-foreground: 210 40% 98%;
-  --ring: 195 100% 50%;
+  --ring: 320 100% 60%;
   --radius: 0.375rem;
 
   /* Custom theme colors */
-  --web3-blue: 195 100% 50%;
-  --web3-purple: 265 89% 60%;
-  --web3-green: 135 98% 58%;
-  --web3-pink: 330 100% 65%;
-  --web3-yellow: 40 100% 60%;
-  --web3-dark: 230 25% 5%;
-  --web3-light: 210 40% 98%;
+  --cyber-blue: 180 100% 60%;
+  --cyber-pink: 320 100% 60%;
+  --cyber-purple: 280 100% 65%;
+  --cyber-teal: 165 100% 70%;
+  --cyber-yellow: 45 100% 60%;
+  --cyber-dark: 270 50% 8%;
+  --cyber-darker: 270 50% 5%;
+  --cyber-light: 210 40% 98%;
 }
 
 @layer base {
