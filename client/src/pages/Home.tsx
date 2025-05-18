@@ -7,13 +7,36 @@ import { useWallet } from '@/hooks/useWallet';
 import Footer from '@/components/Footer';
 import cyberCatLogo from '@/assets/cyber-cat-logo.svg';
 
+// SLERF token data
 const tokenData = {
   price: 1.9374,
   change: '+15.2%',
   holders: '12,930',
   marketCap: '$4.8M',
-  volume: '$927K'
+  volume: '$927K',
+  address: '0x233df63325933fa3f2dac8e695cd84bb2f91ab07',
+  symbol: 'LERF',
+  decimals: 18,
+  network: 'Ethereum',
+  chainId: 1
 };
+
+// Staking information
+const stakingInfo = {
+  apy: '15%',
+  dailyRewards: '100+',
+  distribution: '24/7',
+  minStake: '1000 LERF',
+  lockPeriods: ['30 days', '90 days', '180 days'],
+  totalStaked: '4.2M LERF'
+};
+
+// Exchange listings
+const exchanges = [
+  { name: 'Uniswap', logo: '🦄', url: 'https://app.uniswap.org/#/swap' },
+  { name: 'PancakeSwap', logo: '🥞', url: 'https://pancakeswap.finance/swap' },
+  { name: 'SushiSwap', logo: '🍣', url: 'https://app.sushi.com/swap' }
+];
 
 // Animation variants for elements
 const containerVariants = {
@@ -93,7 +116,7 @@ const Home: React.FC = () => {
                 className="text-lg md:text-xl mb-8 text-[#a4b9f5] max-w-2xl mx-auto md:mx-0"
                 variants={itemVariants}
               >
-                The most cutting-edge Web3 platform on Solana, bringing you a revolutionary token experience with real-time analytics and futuristic rewards.
+                The most cutting-edge Web3 platform on Ethereum, bringing you a revolutionary token experience with real-time analytics, staking rewards, and gamified ecosystem.
               </motion.p>
               
               <motion.div className="flex flex-wrap justify-center md:justify-start gap-4" variants={itemVariants}>
@@ -227,6 +250,120 @@ const Home: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-[hsl(var(--cyber-yellow))]"></div>
                   <div className="text-white">Treasury (10%)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* How to Buy Section */}
+      {/* Staking Section */}
+      <section className="py-16 bg-gradient-to-b from-transparent to-[rgba(255,0,230,0.05)]">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-audiowide mb-4 text-white">STAKE & <span className="text-[hsl(var(--cyber-pink))]">EARN</span></h2>
+            <p className="text-lg text-white/70 max-w-3xl mx-auto">Earn passive income by staking your $LERF tokens in our community pool with competitive APY and flexible lock periods.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            {/* Staking Info Card */}
+            <div className="neon-border p-6">
+              <div className="mb-4 flex justify-between items-center">
+                <h3 className="text-2xl font-audiowide text-[hsl(var(--cyber-pink))]">STAKING REWARDS</h3>
+                <span className="text-xs text-white/60 font-mono">REAL-TIME RATES</span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-6 mb-6">
+                <div className="bg-black/30 p-4 rounded">
+                  <div className="text-xs text-white/60 mb-1">APY</div>
+                  <div className="text-3xl font-bold text-white">{stakingInfo.apy}</div>
+                  <div className="text-xs text-[hsl(var(--cyber-teal))]">Annual Percentage Yield</div>
+                </div>
+                <div className="bg-black/30 p-4 rounded">
+                  <div className="text-xs text-white/60 mb-1">TOTAL STAKED</div>
+                  <div className="text-3xl font-bold text-white">{stakingInfo.totalStaked}</div>
+                  <div className="text-xs text-[hsl(var(--cyber-teal))]">In Community Pool</div>
+                </div>
+              </div>
+              
+              <div className="bg-black/30 p-4 rounded mb-6">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="text-xs text-white/60">LOCK PERIODS</div>
+                  <div className="text-xs text-[hsl(var(--cyber-blue))]">HIGHER REWARDS FOR LONGER LOCKS</div>
+                </div>
+                <div className="flex justify-between">
+                  {stakingInfo.lockPeriods.map((period, index) => (
+                    <div key={period} className="text-center px-4 py-2 rounded bg-black/30">
+                      <div className="text-lg font-bold text-white">{period}</div>
+                      <div className="text-xs text-[hsl(var(--cyber-pink))]">
+                        +{index * 5 + 15}% APY
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <Button className="w-full bg-[hsl(var(--cyber-pink))] hover:bg-[hsl(var(--cyber-pink))/90] font-bold py-6 text-lg">
+                STAKE YOUR $LERF
+              </Button>
+            </div>
+            
+            {/* Exchange Listings */}
+            <div className="neon-border-blue p-6">
+              <div className="mb-4 flex justify-between items-center">
+                <h3 className="text-2xl font-audiowide text-[hsl(var(--cyber-blue))]">EXCHANGE LISTINGS</h3>
+                <span className="text-xs text-white/60 font-mono">CONTRACT: {tokenData.address.substring(0, 6)}...{tokenData.address.substring(38)}</span>
+              </div>
+              
+              <div className="mb-6">
+                <div className="bg-black/30 p-4 rounded mb-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[hsl(var(--cyber-blue))] to-[hsl(var(--cyber-purple))] flex items-center justify-center shadow-lg">
+                      <img src={cyberCatLogo} alt="Token" className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <div className="text-xs text-white/60">TOKEN SUMMARY</div>
+                      <div className="text-lg font-bold text-white">${tokenData.symbol}</div>
+                      <div className="text-xs text-[hsl(var(--cyber-teal))]">{tokenData.network} • {tokenData.decimals} decimals</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  {exchanges.map((exchange) => (
+                    <div key={exchange.name} className="bg-black/30 p-4 rounded hover:bg-black/40 transition-colors cursor-pointer">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                          <div className="text-2xl">{exchange.logo}</div>
+                          <div className="font-bold text-white">{exchange.name}</div>
+                        </div>
+                        <Button size="sm" variant="link" className="text-[hsl(var(--cyber-blue))]">
+                          Trade Now →
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="bg-black/30 p-4 rounded">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="text-xs text-white/60">ADDITIONAL UTILITIES</div>
+                </div>
+                <div className="grid grid-cols-2 gap-3 text-center">
+                  <div className="px-3 py-2 rounded bg-black/30">
+                    <div className="text-xs text-white">GOVERNANCE</div>
+                  </div>
+                  <div className="px-3 py-2 rounded bg-black/30">
+                    <div className="text-xs text-white">NFT MARKETPLACE</div>
+                  </div>
+                  <div className="px-3 py-2 rounded bg-black/30">
+                    <div className="text-xs text-white">PLAY-TO-EARN</div>
+                  </div>
+                  <div className="px-3 py-2 rounded bg-black/30">
+                    <div className="text-xs text-white">DAO MEMBERSHIP</div>
+                  </div>
                 </div>
               </div>
             </div>
