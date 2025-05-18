@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import AnimatedCatLogo from './AnimatedCatLogo';
+import SLERFAnimatedLogo from './SLERFAnimatedLogo';
 import { 
   getRecentTransactions, 
   getTransactionDetails, 
@@ -205,7 +205,7 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
         {/* Header section */}
         <div className="p-4 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center">
-            <AnimatedCatLogo size={40} interval={10000} />
+            <SLERFAnimatedLogo size={40} interval={10000} />
             <h3 className="ml-3 text-xl font-audiowide text-white">Blockchain Explorer</h3>
           </div>
           
