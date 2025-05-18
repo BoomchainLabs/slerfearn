@@ -14,11 +14,11 @@ import cyberCatLogo from '@/assets/cyber-cat-logo.svg';
 import slerfLogo from '@/assets/slerf-logo.svg';
 import { fetchTokenData, fetchStakingInfo, fetchExchanges, fetchNFTCollections } from '@/lib/api';
 import { TokenData, StakingInfo, Exchange } from '@/lib/api';
-import TransactionExplorer from '@/components/TransactionExplorer';
 import CyberTokenChart from '@/components/CyberTokenChart';
 import DailyTasks from '@/components/DailyTasks';
 import GitBookDocs from '@/components/GitBookDocs';
 import GoFundMemeWidget from '@/components/GoFundMemeWidget';
+import LiveBlockchainExplorer from '@/components/LiveBlockchainExplorer';
 
 // Initial data states for before the real data loads
 const initialTokenData: TokenData = {
@@ -681,13 +681,15 @@ const Home: React.FC = () => {
               LIVE <span className="text-[hsl(var(--cyber-blue))]">BLOCKCHAIN</span> EXPLORER
             </h2>
             <p className="text-lg text-white/70 max-w-3xl mx-auto">
-              Watch blockchain transactions in real-time. See token transfers, smart contract interactions, and ETH movements as they happen.
+              Watch blockchain transactions in real-time across multiple networks. See token transfers, smart contract interactions, cross-chain bridges, and ETH movements as they happen.
             </p>
           </div>
           
-          {/* Transaction Explorer Component */}
-          <TransactionExplorer 
-            maxTransactions={8}
+          {/* Interactive Blockchain Explorer Component */}
+          <LiveBlockchainExplorer 
+            maxTransactions={50}
+            liveUpdates={true}
+            showFilters={true}
             className="w-full"
           />
         </div>
