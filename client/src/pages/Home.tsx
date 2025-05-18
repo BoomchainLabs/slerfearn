@@ -17,6 +17,8 @@ import { TokenData, StakingInfo, Exchange } from '@/lib/api';
 import TransactionExplorer from '@/components/TransactionExplorer';
 import CyberTokenChart from '@/components/CyberTokenChart';
 import DailyTasks from '@/components/DailyTasks';
+import GitBookDocs from '@/components/GitBookDocs';
+import GoFundMemeWidget from '@/components/GoFundMemeWidget';
 
 // Initial data states for before the real data loads
 const initialTokenData: TokenData = {
@@ -660,6 +662,17 @@ const Home: React.FC = () => {
             <div>
               {/* Daily Tasks Component */}
               <DailyTasks className="h-full" />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+            <div>
+              {/* GitBook Documentation Component */}
+              <GitBookDocs className="h-full" />
+            </div>
+            <div>
+              {/* GoFundMeme Widget Component */}
+              <GoFundMemeWidget className="h-full" />
             </div>
           </div>
           

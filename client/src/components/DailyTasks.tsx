@@ -134,8 +134,7 @@ const DailyTasks: React.FC<DailyTasksProps> = ({ className = "" }) => {
             <span className="text-xs text-white/70">{completedCount}/{tasks.length} Completed</span>
             <span className="text-xs font-mono text-[hsl(var(--cyber-pink))]">{earnedRewards}/{totalPossibleRewards} $LERF</span>
           </div>
-          <Progress value={completionPercentage} className="h-2" 
-            indicatorClassName="bg-gradient-to-r from-[hsl(var(--cyber-pink))] to-[hsl(var(--cyber-blue))]" />
+          <Progress value={completionPercentage} className="h-2" />
         </div>
         
         <div className="space-y-3 flex-grow overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent pr-1">
