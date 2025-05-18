@@ -224,36 +224,32 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
               </div>
               
               <div className="flex gap-2">
-                <TabsList className="bg-black/30">
-                  <TabsTrigger 
-                    value="all" 
+                <div className="flex bg-black/30 rounded-md overflow-hidden p-0.5 space-x-1">
+                  <button 
                     onClick={() => setTypeFilter(null)}
-                    className={!typeFilter ? "data-[state=active]:bg-[hsl(var(--primary))]" : ""}
+                    className={`px-3 py-1 text-sm rounded ${!typeFilter ? 'bg-[hsl(var(--primary))] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
                   >
                     All
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="transfer" 
+                  </button>
+                  <button 
                     onClick={() => setTypeFilter('transfer')}
-                    className={typeFilter === 'transfer' ? "data-[state=active]:bg-[hsl(var(--primary))]" : ""}
+                    className={`px-3 py-1 text-sm rounded ${typeFilter === 'transfer' ? 'bg-[hsl(var(--primary))] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
                   >
                     ETH
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="token" 
+                  </button>
+                  <button 
                     onClick={() => setTypeFilter('token')}
-                    className={typeFilter === 'token' ? "data-[state=active]:bg-[hsl(var(--primary))]" : ""}
+                    className={`px-3 py-1 text-sm rounded ${typeFilter === 'token' ? 'bg-[hsl(var(--primary))] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
                   >
                     Tokens
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="contract" 
+                  </button>
+                  <button 
                     onClick={() => setTypeFilter('contract')}
-                    className={typeFilter === 'contract' ? "data-[state=active]:bg-[hsl(var(--primary))]" : ""}
+                    className={`px-3 py-1 text-sm rounded ${typeFilter === 'contract' ? 'bg-[hsl(var(--primary))] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
                   >
                     Contracts
-                  </TabsTrigger>
-                </TabsList>
+                  </button>
+                </div>
                 
                 {(searchQuery || typeFilter) && (
                   <Button 
