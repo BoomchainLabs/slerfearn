@@ -10,6 +10,7 @@ import { useWallet } from '@/hooks/useWallet';
 import Footer from '@/components/Footer';
 import AnimatedCatLogo from '@/components/AnimatedCatLogo';
 import cyberCatLogo from '@/assets/cyber-cat-logo.svg';
+import slerfLogo from '@/assets/slerf-logo.svg';
 import { fetchTokenData, fetchStakingInfo, fetchExchanges, fetchNFTCollections } from '@/lib/api';
 import { TokenData, StakingInfo, Exchange } from '@/lib/api';
 import TransactionExplorer from '@/components/TransactionExplorer';
@@ -299,7 +300,7 @@ const Home: React.FC = () => {
               
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[hsl(var(--cyber-pink))] to-[hsl(var(--cyber-purple))] flex items-center justify-center shadow-lg">
-                  <img src={cyberCatLogo} alt="Token" className="w-12 h-12" />
+                  <img src={slerfLogo} alt="SLERF Token" className="w-12 h-12" />
                 </div>
                 <div>
                   {loading.token ? (
@@ -524,7 +525,7 @@ const Home: React.FC = () => {
                 <div className="bg-black/30 p-4 rounded mb-4">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[hsl(var(--cyber-blue))] to-[hsl(var(--cyber-purple))] flex items-center justify-center shadow-lg">
-                      <img src={cyberCatLogo} alt="Token" className="w-8 h-8" />
+                      <img src={slerfLogo} alt="SLERF Token" className="w-8 h-8" />
                     </div>
                     <div>
                       <div className="text-xs text-white/60">TOKEN SUMMARY</div>
