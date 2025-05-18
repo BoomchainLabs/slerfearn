@@ -52,13 +52,34 @@
   }
 
   body {
-    @apply bg-background text-foreground font-roboto;
+    @apply bg-background text-foreground font-['Chakra_Petch'];
+    background-image: 
+      radial-gradient(circle at 80% 10%, rgba(255, 0, 230, 0.15) 0%, transparent 25%),
+      radial-gradient(circle at 20% 90%, rgba(0, 230, 255, 0.15) 0%, transparent 25%);
   }
 }
 
-/* Neo-futuristic glass effect */
+/* Typography */
+.font-audiowide {
+  font-family: 'Audiowide', cursive;
+}
+
+.font-orbitron {
+  font-family: 'Orbitron', sans-serif;
+}
+
+.font-chakra {
+  font-family: 'Chakra Petch', sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Neo-cyberpunk glass effect */
 .glass {
   @apply bg-white/[0.05] backdrop-blur-xl border border-white/[0.08] relative;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
 .glass::before {
@@ -85,6 +106,40 @@
   right: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
+}
+
+/* Neon-bordered elements */
+.neon-border {
+  position: relative;
+  border-radius: 8px;
+  background: rgba(20, 20, 31, 0.8);
+  box-shadow: 0 0 20px rgba(255, 0, 230, 0.3);
+}
+
+.neon-border-blue {
+  position: relative;
+  border-radius: 8px;
+  background: rgba(20, 20, 31, 0.8);
+  box-shadow: 0 0 20px rgba(0, 230, 255, 0.3);
+}
+
+.neon-border::before,
+.neon-border-blue::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 10px;
+  padding: 2px;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+.neon-border::before {
+  background: linear-gradient(45deg, hsl(var(--cyber-pink)), hsl(var(--cyber-purple)));
+}
+
+.neon-border-blue::before {
+  background: linear-gradient(45deg, hsl(var(--cyber-blue)), hsl(var(--cyber-teal)));
 }
 
 /* Hover effects for cards */
