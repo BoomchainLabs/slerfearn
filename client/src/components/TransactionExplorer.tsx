@@ -88,7 +88,7 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
     };
   }, [isLive, maxTransactions, toast]);
 
-  // Apply filters whenever transactions, searchQuery, or typeFilter changes
+  // Apply filters whenever transactions, searchQuery, typeFilter, or networkFilter changes
   useEffect(() => {
     let filtered = [...transactions];
 
@@ -99,7 +99,9 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
         (tx) =>
           tx.hash.toLowerCase().includes(query) ||
           tx.from.toLowerCase().includes(query) ||
-          (tx.to && tx.to.toLowerCase().includes(query))
+          (tx.to && tx.to.toLowerCase().includes(query)) ||
+          (tx.network && tx.network.toLowerCase().includes(query)) ||
+          (tx.tokenSymbol && tx.tokenSymbol.toLowerCase().includes(query))
       );
     }
 
@@ -107,9 +109,14 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
     if (typeFilter) {
       filtered = filtered.filter((tx) => tx.type === typeFilter);
     }
+    
+    // Apply network filter
+    if (networkFilter) {
+      filtered = filtered.filter((tx) => tx.network === networkFilter);
+    }
 
     setFilteredTransactions(filtered);
-  }, [transactions, searchQuery, typeFilter]);
+  }, [transactions, searchQuery, typeFilter, networkFilter]);
 
   // Scroll to top when new transactions are added
   useEffect(() => {
@@ -165,6 +172,8 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
         return '📜'; // Contract interaction
       case 'transfer':
         return '💸'; // ETH transfer
+      case 'cross-chain':
+        return '🌉'; // Cross-chain bridge
       default:
         return '🔄'; // Unknown
     }
@@ -217,26 +226,21 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
             <div className="flex flex-wrap gap-3">
               <div className="flex-1 min-w-[200px]">
                 <Input
-                  placeholder="Search by address or transaction hash"
+                  placeholder="Search address, hash, token, or network"
                   value={searchQuery}
                   onChange={handleSearchChange}
                   className="bg-black/30 border-white/10 text-white"
                 />
               </div>
               
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
+                {/* Transaction type filters */}
                 <div className="flex bg-black/30 rounded-md overflow-hidden p-0.5 space-x-1">
                   <button 
                     onClick={() => setTypeFilter(null)}
                     className={`px-3 py-1 text-sm rounded ${!typeFilter ? 'bg-[hsl(var(--primary))] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
                   >
-                    All
-                  </button>
-                  <button 
-                    onClick={() => setTypeFilter('transfer')}
-                    className={`px-3 py-1 text-sm rounded ${typeFilter === 'transfer' ? 'bg-[hsl(var(--primary))] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
-                  >
-                    ETH
+                    All Types
                   </button>
                   <button 
                     onClick={() => setTypeFilter('token')}
@@ -245,10 +249,38 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
                     Tokens
                   </button>
                   <button 
-                    onClick={() => setTypeFilter('contract')}
-                    className={`px-3 py-1 text-sm rounded ${typeFilter === 'contract' ? 'bg-[hsl(var(--primary))] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+                    onClick={() => setTypeFilter('cross-chain')}
+                    className={`px-3 py-1 text-sm rounded ${typeFilter === 'cross-chain' ? 'bg-[hsl(var(--cyber-pink))] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
                   >
-                    Contracts
+                    Cross-Chain
+                  </button>
+                  <button 
+                    onClick={() => setTypeFilter('transfer')}
+                    className={`px-3 py-1 text-sm rounded ${typeFilter === 'transfer' ? 'bg-[hsl(var(--primary))] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+                  >
+                    Transfers
+                  </button>
+                </div>
+                
+                {/* Network filters */}
+                <div className="flex bg-black/30 rounded-md overflow-hidden p-0.5 space-x-1">
+                  <button 
+                    onClick={() => setNetworkFilter(null)}
+                    className={`px-3 py-1 text-sm rounded ${!networkFilter ? 'bg-[hsl(var(--primary))] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+                  >
+                    All Networks
+                  </button>
+                  <button 
+                    onClick={() => setNetworkFilter('Base')}
+                    className={`px-3 py-1 text-sm rounded ${networkFilter === 'Base' ? 'bg-[hsl(var(--cyber-blue))] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+                  >
+                    Base
+                  </button>
+                  <button 
+                    onClick={() => setNetworkFilter('Ethereum')}
+                    className={`px-3 py-1 text-sm rounded ${networkFilter === 'Ethereum' ? 'bg-[hsl(var(--primary))] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+                  >
+                    Ethereum
                   </button>
                 </div>
                 
@@ -332,6 +364,11 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
                             <div className="text-[hsl(var(--primary))] font-mono">
                               {tx.tokenValue} {tx.tokenSymbol}
                             </div>
+                          ) : tx.type === 'cross-chain' ? (
+                            <div className="text-[hsl(var(--cyber-pink))] font-mono">
+                              {tx.tokenValue} {tx.tokenSymbol} → {tx.destinationNetwork}
+                              <span className="ml-1 text-xs text-white/50">via {tx.bridgeName}</span>
+                            </div>
                           ) : (
                             <div className="text-[hsl(var(--accent))] font-mono">
                               {formatValue(tx.value)} ETH
@@ -339,8 +376,25 @@ const TransactionExplorer: React.FC<TransactionExplorerProps> = ({
                           )}
                         </div>
                         
-                        <div className="text-xs text-white/50">
-                          Block #{tx.blockNumber}
+                        <div className="flex items-center space-x-2">
+                          {tx.network && (
+                            <span className={`text-xs px-1.5 py-0.5 rounded ${
+                              tx.network === 'Base' 
+                                ? 'bg-[hsl(var(--cyber-blue))]' 
+                                : tx.network === 'Ethereum'
+                                  ? 'bg-[#627EEA]'
+                                  : tx.network === 'Optimism'
+                                    ? 'bg-[#FF0320]'
+                                    : tx.network === 'Arbitrum'
+                                      ? 'bg-[#28A0F0]'
+                                      : 'bg-[#8247E5]'
+                            }`}>
+                              {tx.network}
+                            </span>
+                          )}
+                          <span className="text-xs text-white/50">
+                            Block #{tx.blockNumber}
+                          </span>
                         </div>
                       </div>
                     </motion.div>
