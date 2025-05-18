@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'wouter';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useWallet } from '@/hooks/useWallet';
 import Footer from '@/components/Footer';
 import cyberCatLogo from '@/assets/cyber-cat-logo.svg';
+import { fetchTokenData, fetchStakingInfo, fetchExchanges, fetchNFTCollections } from '@/lib/api';
+import { TokenData, StakingInfo, Exchange } from '@/lib/api';
 
-// SLERF token data
-const tokenData = {
-  price: 1.9374,
-  change: '+15.2%',
-  holders: '12,930',
-  marketCap: '$4.8M',
-  volume: '$927K',
+// Initial data states for before the real data loads
+const initialTokenData: TokenData = {
+  price: 0,
+  change: '0%',
+  holders: '0',
+  marketCap: '$0',
+  volume: '$0',
   address: '0x233df63325933fa3f2dac8e695cd84bb2f91ab07',
   symbol: 'LERF',
   decimals: 18,
@@ -21,18 +26,16 @@ const tokenData = {
   chainId: 1
 };
 
-// Staking information
-const stakingInfo = {
-  apy: '15%',
-  dailyRewards: '100+',
+const initialStakingInfo: StakingInfo = {
+  apy: '0%',
+  dailyRewards: '0',
   distribution: '24/7',
-  minStake: '1000 LERF',
+  minStake: '0 LERF',
   lockPeriods: ['30 days', '90 days', '180 days'],
-  totalStaked: '4.2M LERF'
+  totalStaked: '0 LERF'
 };
 
-// Exchange listings
-const exchanges = [
+const initialExchanges: Exchange[] = [
   { name: 'Uniswap', logo: '🦄', url: 'https://app.uniswap.org/#/swap' },
   { name: 'PancakeSwap', logo: '🥞', url: 'https://pancakeswap.finance/swap' },
   { name: 'SushiSwap', logo: '🍣', url: 'https://app.sushi.com/swap' }
@@ -61,16 +64,128 @@ const itemVariants = {
 
 const Home: React.FC = () => {
   const { wallet, connectWallet } = useWallet();
+  const { toast } = useToast();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [tokenData, setTokenData] = useState<TokenData>(initialTokenData);
+  const [stakingInfo, setStakingInfo] = useState<StakingInfo>(initialStakingInfo);
+  const [exchanges, setExchanges] = useState<Exchange[]>(initialExchanges);
+  const [nftCollections, setNftCollections] = useState<any[]>([]);
+  const [loading, setLoading] = useState({
+    token: true,
+    staking: true,
+    exchanges: true,
+    nfts: true
+  });
+  const [stakeAmount, setStakeAmount] = useState('');
+  const [selectedLockPeriod, setSelectedLockPeriod] = useState<string | null>(null);
+  const [livePriceUpdates, setLivePriceUpdates] = useState(true);
 
+  // Load data on component mount
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 500);
+    const loadData = async () => {
+      try {
+        // Fetch token data
+        const tokenResult = await fetchTokenData();
+        setTokenData(tokenResult);
+        setLoading(prev => ({ ...prev, token: false }));
+        
+        // Fetch staking info
+        const stakingResult = await fetchStakingInfo();
+        setStakingInfo(stakingResult);
+        setLoading(prev => ({ ...prev, staking: false }));
+        
+        // Fetch exchanges
+        const exchangesResult = await fetchExchanges();
+        setExchanges(exchangesResult);
+        setLoading(prev => ({ ...prev, exchanges: false }));
+        
+        // Fetch NFT collections
+        const nftResult = await fetchNFTCollections();
+        setNftCollections(nftResult);
+        setLoading(prev => ({ ...prev, nfts: false }));
+        
+        setIsLoaded(true);
+      } catch (error) {
+        console.error('Error loading data:', error);
+        toast({
+          variant: "destructive",
+          title: "Failed to load data",
+          description: "Could not connect to the network. Please try again."
+        });
+      }
+    };
     
-    return () => clearTimeout(timer);
-  }, []);
+    loadData();
+    
+    // Simulate live price updates
+    if (livePriceUpdates) {
+      const priceUpdateInterval = setInterval(() => {
+        setTokenData(prev => {
+          const change = (Math.random() * 2 - 1) * 0.005; // Between -0.5% and +0.5%
+          const newPrice = prev.price * (1 + change);
+          const priceChange = newPrice > prev.price ? '+' : '';
+          const percentChange = ((newPrice - prev.price) / prev.price * 100).toFixed(2);
+          
+          return {
+            ...prev,
+            price: parseFloat(newPrice.toFixed(4)),
+            change: `${priceChange}${percentChange}%`
+          };
+        });
+      }, 5000);
+      
+      return () => clearInterval(priceUpdateInterval);
+    }
+  }, [livePriceUpdates]);
 
+  // Handle staking action
+  const handleStake = () => {
+    if (!wallet) {
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet to stake tokens",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!stakeAmount || parseFloat(stakeAmount) <= 0) {
+      toast({
+        title: "Invalid amount",
+        description: "Please enter a valid staking amount",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!selectedLockPeriod) {
+      toast({
+        title: "Select lock period",
+        description: "Please select a lock period for your stake",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Simulate successful staking
+    toast({
+      title: "Staking successful!",
+      description: `You have staked ${stakeAmount} $LERF for ${selectedLockPeriod}`,
+      variant: "default"
+    });
+    
+    // Reset form
+    setStakeAmount('');
+    setSelectedLockPeriod(null);
+  };
+  
+  // Handle connect wallet with proper event handling
+  const handleConnectWallet = () => {
+    if (connectWallet) {
+      connectWallet();
+    }
+  };
+  
   return (
     <div className="w-full min-h-screen">
       {/* Hero Section */}
@@ -128,7 +243,7 @@ const Home: React.FC = () => {
                     size="lg" 
                     variant="outline" 
                     className="border-[hsl(var(--cyber-blue))] text-[hsl(var(--cyber-blue))] hover:bg-[hsl(var(--cyber-blue))/10] text-lg font-bold px-8 rounded-md"
-                    onClick={connectWallet}
+                    onClick={handleConnectWallet}
                   >
                     Connect Wallet
                   </Button>
@@ -169,7 +284,15 @@ const Home: React.FC = () => {
             <div className="neon-border p-6">
               <div className="mb-4 flex justify-between items-center">
                 <h3 className="text-2xl font-audiowide text-[hsl(var(--cyber-pink))]">LIVE PRICE</h3>
-                <span className="text-xs text-white/60 font-mono">REAL-TIME UPDATES</span>
+                <div className="flex items-center">
+                  <div className={`w-2 h-2 rounded-full mr-2 ${livePriceUpdates ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
+                  <button 
+                    onClick={() => setLivePriceUpdates(!livePriceUpdates)} 
+                    className="text-xs text-white/60 font-mono hover:text-white/90"
+                  >
+                    {livePriceUpdates ? 'REAL-TIME ACTIVE' : 'UPDATES PAUSED'}
+                  </button>
+                </div>
               </div>
               
               <div className="flex items-center gap-4 mb-6">
@@ -177,24 +300,55 @@ const Home: React.FC = () => {
                   <img src={cyberCatLogo} alt="Token" className="w-12 h-12" />
                 </div>
                 <div>
-                  <div className="text-4xl font-audiowide text-white">${tokenData.price}</div>
-                  <div className="text-[hsl(var(--cyber-teal))] font-mono">{tokenData.change}</div>
+                  {loading.token ? (
+                    <>
+                      <Skeleton className="h-10 w-32 mb-2" />
+                      <Skeleton className="h-4 w-24" />
+                    </>
+                  ) : (
+                    <>
+                      <AnimatePresence mode="wait">
+                        <motion.div 
+                          key={tokenData.price}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="text-4xl font-audiowide text-white"
+                        >
+                          ${tokenData.price.toFixed(4)}
+                        </motion.div>
+                      </AnimatePresence>
+                      <div className={`font-mono ${tokenData.change.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>
+                        {tokenData.change}
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
               
               <div className="grid grid-cols-3 gap-4">
-                <div className="bg-black/30 p-3 rounded">
-                  <div className="text-xs text-white/60 mb-1">HOLDERS</div>
-                  <div className="text-lg font-bold text-white">{tokenData.holders}</div>
-                </div>
-                <div className="bg-black/30 p-3 rounded">
-                  <div className="text-xs text-white/60 mb-1">MARKET CAP</div>
-                  <div className="text-lg font-bold text-white">{tokenData.marketCap}</div>
-                </div>
-                <div className="bg-black/30 p-3 rounded">
-                  <div className="text-xs text-white/60 mb-1">24H VOLUME</div>
-                  <div className="text-lg font-bold text-white">{tokenData.volume}</div>
-                </div>
+                {loading.token ? (
+                  <>
+                    <Skeleton className="h-20 w-full rounded" />
+                    <Skeleton className="h-20 w-full rounded" />
+                    <Skeleton className="h-20 w-full rounded" />
+                  </>
+                ) : (
+                  <>
+                    <div className="bg-black/30 p-3 rounded">
+                      <div className="text-xs text-white/60 mb-1">HOLDERS</div>
+                      <div className="text-lg font-bold text-white">{tokenData.holders}</div>
+                    </div>
+                    <div className="bg-black/30 p-3 rounded">
+                      <div className="text-xs text-white/60 mb-1">MARKET CAP</div>
+                      <div className="text-lg font-bold text-white">{tokenData.marketCap}</div>
+                    </div>
+                    <div className="bg-black/30 p-3 rounded">
+                      <div className="text-xs text-white/60 mb-1">24H VOLUME</div>
+                      <div className="text-lg font-bold text-white">{tokenData.volume}</div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
             
@@ -304,9 +458,57 @@ const Home: React.FC = () => {
                 </div>
               </div>
               
-              <Button className="w-full bg-[hsl(var(--cyber-pink))] hover:bg-[hsl(var(--cyber-pink))/90] font-bold py-6 text-lg">
-                STAKE YOUR $LERF
-              </Button>
+              {loading.staking ? (
+                <Skeleton className="h-20 w-full" />
+              ) : (
+                <>
+                  <div className="mb-6">
+                    <div className="mb-2 text-sm text-white/60">Enter amount to stake</div>
+                    <div className="flex gap-3">
+                      <Input
+                        type="number"
+                        placeholder="Amount of $LERF"
+                        className="bg-black/30 border-white/10 text-white"
+                        value={stakeAmount}
+                        onChange={(e) => setStakeAmount(e.target.value)}
+                      />
+                      <Button 
+                        className="bg-black/30 hover:bg-black/50 text-white px-3 py-2"
+                        onClick={() => wallet ? setStakeAmount(wallet.balance || '1000') : null}
+                      >
+                        MAX
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-6">
+                    <div className="mb-2 text-sm text-white/60">Select lock period</div>
+                    <div className="flex gap-2">
+                      {stakingInfo.lockPeriods.map((period, index) => (
+                        <Button 
+                          key={period} 
+                          variant={selectedLockPeriod === period ? "default" : "outline"}
+                          className={
+                            selectedLockPeriod === period 
+                            ? "flex-1 bg-[hsl(var(--cyber-pink))] hover:bg-[hsl(var(--cyber-pink))/90]" 
+                            : "flex-1 border-white/10 text-white hover:bg-black/20"
+                          }
+                          onClick={() => setSelectedLockPeriod(period)}
+                        >
+                          {period}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    className="w-full bg-[hsl(var(--cyber-pink))] hover:bg-[hsl(var(--cyber-pink))/90] font-bold py-6 text-lg"
+                    onClick={handleStake}
+                  >
+                    STAKE YOUR $LERF
+                  </Button>
+                </>
+              )}
             </div>
             
             {/* Exchange Listings */}
@@ -331,19 +533,42 @@ const Home: React.FC = () => {
                 </div>
                 
                 <div className="space-y-4">
-                  {exchanges.map((exchange) => (
-                    <div key={exchange.name} className="bg-black/30 p-4 rounded hover:bg-black/40 transition-colors cursor-pointer">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                          <div className="text-2xl">{exchange.logo}</div>
-                          <div className="font-bold text-white">{exchange.name}</div>
-                        </div>
-                        <Button size="sm" variant="link" className="text-[hsl(var(--cyber-blue))]">
-                          Trade Now →
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
+                  {loading.exchanges ? (
+                    <>
+                      <Skeleton className="h-16 w-full rounded" />
+                      <Skeleton className="h-16 w-full rounded" />
+                      <Skeleton className="h-16 w-full rounded" />
+                    </>
+                  ) : (
+                    <>
+                      {exchanges.map((exchange) => (
+                        <motion.div 
+                          key={exchange.name} 
+                          className="bg-black/30 p-4 rounded hover:bg-black/40 transition-colors cursor-pointer"
+                          whileHover={{ scale: 1.02 }}
+                          onClick={() => window.open(exchange.url, '_blank')}
+                        >
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                              <div className="text-2xl">{exchange.logo}</div>
+                              <div className="font-bold text-white">{exchange.name}</div>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              variant="link" 
+                              className="text-[hsl(var(--cyber-blue))]"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                window.open(exchange.url, '_blank');
+                              }}
+                            >
+                              Trade Now →
+                            </Button>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </>
+                  )}
                 </div>
               </div>
               
