@@ -78,14 +78,14 @@ const Home: React.FC = () => {
             >
               <motion.div variants={itemVariants}>
                 <h1 className="text-4xl md:text-6xl lg:text-7xl mb-6 font-audiowide bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--cyber-pink))] to-[hsl(var(--cyber-blue))]">
-                  CHONK9K
+                  SLERF
                 </h1>
               </motion.div>
               
               <motion.div variants={itemVariants}>
                 <h2 className="text-2xl md:text-3xl lg:text-4xl mb-6 font-audiowide text-white">
-                  CHONK HARD <br className="hidden md:inline" />
-                  <span className="text-[hsl(var(--cyber-pink))]">PUMP HARDER!</span>
+                  STAKE HARD <br className="hidden md:inline" />
+                  <span className="text-[hsl(var(--cyber-pink))]">EARN HARDER!</span>
                 </h2>
               </motion.div>
               
@@ -98,7 +98,7 @@ const Home: React.FC = () => {
               
               <motion.div className="flex flex-wrap justify-center md:justify-start gap-4" variants={itemVariants}>
                 <Button size="lg" className="bg-[hsl(var(--cyber-pink))] hover:bg-[hsl(var(--cyber-pink))/90] text-white font-bold px-8 text-lg rounded-md shadow-[0_0_10px_rgba(255,0,230,0.5)]">
-                  BUY $CHONK
+                  BUY $LERF
                 </Button>
                 {!wallet && (
                   <Button 
@@ -239,7 +239,7 @@ const Home: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-audiowide mb-4 text-white">HOW TO <span className="text-[hsl(var(--cyber-blue))]">BUY</span></h2>
-            <p className="text-lg text-white/70 max-w-3xl mx-auto">Follow these simple steps to get your paws on $CHONK tokens and join our cyberpunk community.</p>
+            <p className="text-lg text-white/70 max-w-3xl mx-auto">Follow these simple steps to get your hands on $LERF tokens and join our cyberpunk community.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -249,14 +249,14 @@ const Home: React.FC = () => {
                   <span className="font-audiowide text-xl text-white">{step}</span>
                 </div>
                 <h3 className="text-xl font-audiowide text-center mb-3 text-white">
-                  {step === 1 ? 'Create Wallet' : step === 2 ? 'Add Funds' : 'Swap for $CHONK'}
+                  {step === 1 ? 'Create Wallet' : step === 2 ? 'Add Funds' : 'Swap for $LERF'}
                 </h3>
                 <p className="text-center text-white/70">
                   {step === 1 
                     ? 'Download a Solana-compatible wallet like Phantom or Solflare and set it up.' 
                     : step === 2 
                     ? 'Add SOL to your wallet through an exchange or direct purchase.' 
-                    : 'Connect to our DEX and swap your SOL for $CHONK tokens.'}
+                    : 'Connect to our DEX and swap your SOL for $LERF tokens.'}
                 </p>
                 <div className="mt-6 text-center">
                   <Button className="bg-[hsl(var(--cyber-blue))] hover:bg-[hsl(var(--cyber-blue))/90] font-bold">
@@ -274,7 +274,7 @@ const Home: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-audiowide mb-4 text-white">EXCLUSIVE <span className="text-[hsl(var(--cyber-pink))]">NFTs</span></h2>
-            <p className="text-lg text-white/70 max-w-3xl mx-auto">Hold $CHONK to gain access to our limited edition cyberpunk cat collection.</p>
+            <p className="text-lg text-white/70 max-w-3xl mx-auto">Hold $LERF to gain access to our limited edition cyberpunk cat collection.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
