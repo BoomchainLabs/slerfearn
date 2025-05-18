@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useWallet } from '@/hooks/useWallet';
 import Footer from '@/components/Footer';
 import AnimatedCatLogo from '@/components/AnimatedCatLogo';
+import SLERFAnimatedLogo from '@/components/SLERFAnimatedLogo';
 import cyberCatLogo from '@/assets/cyber-cat-logo.svg';
 import slerfLogo from '@/assets/slerf-logo.svg';
 import { fetchTokenData, fetchStakingInfo, fetchExchanges, fetchNFTCollections } from '@/lib/api';
@@ -268,7 +269,7 @@ const Home: React.FC = () => {
               }}
             >
               <div className="relative w-72 h-72 md:w-96 md:h-96 flex items-center justify-center">
-                <AnimatedCatLogo 
+                <SLERFAnimatedLogo
                   size={300} 
                   interval={5000} 
                   className="absolute" 
