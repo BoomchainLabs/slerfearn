@@ -1,32 +1,30 @@
 #!/bin/bash
 
-echo "🚀 Preparing $LERF Rewards Hub for Cloudflare deployment..."
+# $LERF Rewards Hub - Cloudflare Deployment Script
+echo "🚀 Deploying $LERF Rewards Hub to boomchainlab.com..."
 
-# Install wrangler if not present
+# Step 1: Install Wrangler CLI (if not already installed)
 if ! command -v wrangler &> /dev/null; then
-    echo "Installing Cloudflare Wrangler CLI..."
+    echo "Installing Wrangler CLI..."
     npm install -g wrangler
 fi
 
-# Build the application
-echo "📦 Building application..."
+# Step 2: Build the application
+echo "Building application..."
 npm run build
 
-# Create deployment package
-echo "📁 Creating deployment package..."
-mkdir -p deployment-package
-cp -r dist/* deployment-package/
-cp package.json deployment-package/
-cp package-lock.json deployment-package/
-cp wrangler.toml deployment-package/
-cp cloudflare-deployment-guide.md deployment-package/
+# Step 3: Deploy to Cloudflare Workers
+echo "Deploying to Cloudflare..."
+wrangler deploy
 
-echo "✅ Deployment package ready in ./deployment-package/"
+# Step 4: Set up custom domain (if not already configured)
+echo "Setting up custom domain: boomchainlab.com"
+wrangler domains add boomchainlab.com
+
+echo "✅ Deployment complete!"
+echo "🌐 Your $LERF Rewards Hub is now live at: https://boomchainlab.com"
 echo ""
-echo "Next steps for boomchainlab.com deployment:"
-echo "1. cd deployment-package"
-echo "2. Set up your environment variables in Cloudflare dashboard"
-echo "3. Configure your domain DNS to point to Cloudflare"
-echo "4. Deploy using: wrangler pages deploy"
-echo ""
-echo "See cloudflare-deployment-guide.md for detailed instructions"
+echo "Next steps:"
+echo "1. Configure your DATABASE_URL in Cloudflare Dashboard"
+echo "2. Set up any additional environment variables"
+echo "3. Test the deployment at https://boomchainlab.com"
