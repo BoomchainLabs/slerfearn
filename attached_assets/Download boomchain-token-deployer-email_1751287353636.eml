@@ -1,0 +1,62 @@
+From: David Okeamah <david@boomchainlab.com>
+To: admin@boomchainlab.com
+Cc: support@boomchainlab.com
+Subject: ✅ Boomchain Token Deployer – Manual Setup Instructions & File Checklist
+Content-Type: text/plain; charset="UTF-8"
+
+Dear Boomchain Admin Team,
+
+Please find below the complete manual setup instructions and checklist for initializing the `boomchain-token-deployer` repository. This tool enables seamless CI/CD deployment of ERC-20 tokens to the Base network via GitHub Actions.
+
+---
+
+✅ Repository: `boomchain-token-deployer`
+
+Structure:
+/
+├── .env.example
+├── hardhat.config.js
+├── package.json
+├── README.md
+├── contracts/
+│   └── TokenRegistry.sol (optional)
+├── deploy/
+│   └── deploy-token.js
+├── scripts/
+│   └── generate-calldata.js
+└── .github/workflows/
+    └── deploy-token.yml
+
+Required GitHub Secrets:
+
+- DEPLOYER_PRIVATE_KEY: Deployer wallet (no `0x` prefix)
+- BASE_RPC_URL: Base network RPC endpoint
+
+---
+
+🧾 Deployment Role Assignments:
+
+Owner / Minter: 0x184bb27def036b32b420750f147af0d56ce72309  
+Fee Recipient: 0xEea96d959963EaB488A3d4B7d5d347785cf1Eab8  
+Platform Fee Collector: 0x1eaf444ebDf6495C57aD52A04C61521bBf564ace
+
+---
+
+🛠 Setup Instructions
+
+1. Manually create the file structure and contents as outlined above.
+2. Commit each file to the repository.
+3. Add GitHub Actions secrets in Settings → Secrets and variables → Actions.
+4. Trigger deployment via GitHub → Actions → Deploy Token to Base Mainnet.
+5. Confirm successful on-chain deployment via BaseScan.
+6. (Optional) Run generate-calldata.js for Gnosis Safe execution.
+
+---
+
+Please confirm once the repository has been set up and initial deployment is successful.
+
+Warm regards,  
+David Okeamah  
+Contributor – BoomchainLabs  
+https://t.me/agunnaya001 / @agunnaya001  
+GitHub: https://github.com/BoomchainLabs
