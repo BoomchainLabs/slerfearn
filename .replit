@@ -35,7 +35,3 @@ waitForPort = 5000
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run devf if"
-
-[[ports]]
-localPort = 5000
-externalPort = 80
