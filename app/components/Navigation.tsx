@@ -19,11 +19,11 @@ export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navItems = [
-    { name: 'Rewards', href: '/rewards', icon: TrophyIcon },
-    { name: 'Trivia', href: '/trivia', icon: SparklesIcon },
-    { name: 'Staking', href: '/staking', icon: CubeIcon },
-    { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
-    { name: 'Docs', href: '/docs', icon: BookOpenIcon },
+    { name: 'Marketplace', href: '/marketplace', icon: CubeIcon },
+    { name: 'Deploy Token', href: '/deploy', icon: SparklesIcon },
+    { name: 'Onboarding', href: '/onboarding', icon: TrophyIcon },
+    { name: 'Staking', href: '/staking', icon: ChartBarIcon },
+    { name: 'Trivia', href: '/trivia', icon: BookOpenIcon },
   ]
 
   return (
