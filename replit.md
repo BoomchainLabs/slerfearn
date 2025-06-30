@@ -146,3 +146,4 @@ $LERF Rewards Hub is a comprehensive Web3 reward platform that gamifies blockcha
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Token Assets: Keep authentic $LERF token data unchanged - real contract 0x233df63325933fa3f2dac8e695cd84bb2f91ab07 on Base network.
