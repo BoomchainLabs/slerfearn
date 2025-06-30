@@ -7,6 +7,8 @@ import Home from "@/pages/Home";
 import Analytics from "@/pages/Analytics";
 import Documentation from "@/pages/Documentation";
 import TokenCreator from "@/pages/TokenCreator";
+import TokenRewards from "@/pages/TokenRewards";
+import Trivia from "@/pages/Trivia";
 import ApiDocs from "@/pages/ApiDocs";
 import NotFound from "@/pages/not-found";
 import { WalletProvider } from "./hooks/useWallet.tsx";
@@ -15,7 +17,8 @@ import Navbar from "./components/Navbar";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home}/>
+      <Route path="/" component={TokenRewards}/>
+      <Route path="/trivia" component={Trivia}/>
       <Route path="/analytics" component={Analytics}/>
       <Route path="/docs" component={Documentation}/>
       <Route path="/token-creator" component={TokenCreator}/>

@@ -591,6 +591,175 @@ export async function registerRoutes(app: Express): Promise<Server> {
   router.get('/gitbook', handleGitBookRequest);
   router.get('/gitbook/docs/:page', handleGitBookRequest);
   
+  // $LERF Token Distribution Routes
+  router.get('/user/stats', async (req: Request, res: Response) => {
+    try {
+      // Mock user stats for development - replace with real user data
+      const userStats = {
+        lerfBalance: 2500000, // 2.5M $LERF
+        totalEarned: 5000000, // 5M $LERF total earned
+        dailyMissionsCompleted: 12,
+        triviaCorrect: 45,
+        triviaTotal: 60,
+        walletsConnected: 2,
+        socialConnections: 3
+      };
+      res.json(userStats);
+    } catch (error) {
+      console.error("Error fetching user stats:", error);
+      res.status(500).json({ message: "Failed to fetch user stats" });
+    }
+  });
+
+  router.post('/wallet/connect', async (req: Request, res: Response) => {
+    try {
+      const { walletAddress } = req.body;
+      // Implement wallet connection logic and reward distribution
+      const reward = 1000000; // 1M $LERF for first wallet connection
+      
+      res.json({ 
+        success: true, 
+        walletAddress,
+        reward,
+        message: `Wallet connected! Earned ${reward.toLocaleString()} $LERF tokens`
+      });
+    } catch (error) {
+      console.error("Error connecting wallet:", error);
+      res.status(500).json({ message: "Failed to connect wallet" });
+    }
+  });
+
+  router.post('/trivia/daily/start', async (req: Request, res: Response) => {
+    try {
+      const sessionId = `trivia_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      res.json({ 
+        sessionId,
+        questionsCount: 3,
+        timeLimit: 300 // 5 minutes
+      });
+    } catch (error) {
+      console.error("Error starting trivia:", error);
+      res.status(500).json({ message: "Failed to start trivia session" });
+    }
+  });
+
+  router.post('/trivia/answer', async (req: Request, res: Response) => {
+    try {
+      const { sessionId, questionId, answer } = req.body;
+      // Validate answer and track progress
+      res.json({ 
+        correct: true, // This would be validated against the correct answer
+        sessionId,
+        questionId
+      });
+    } catch (error) {
+      console.error("Error submitting trivia answer:", error);
+      res.status(500).json({ message: "Failed to submit answer" });
+    }
+  });
+
+  router.post('/trivia/complete', async (req: Request, res: Response) => {
+    try {
+      const { sessionId, answers, score } = req.body;
+      const baseReward = 500000; // 500K $LERF per correct answer
+      const perfectBonus = 2000000; // 2M $LERF perfect score bonus
+      
+      // Calculate final reward based on performance
+      const correctAnswers = answers.length; // This would be calculated properly
+      let totalReward = baseReward * correctAnswers;
+      
+      if (correctAnswers === 3) { // Perfect score
+        totalReward += perfectBonus;
+      }
+      
+      res.json({ 
+        sessionCompleted: true,
+        correctAnswers,
+        totalQuestions: 3,
+        totalReward,
+        perfectScore: correctAnswers === 3
+      });
+    } catch (error) {
+      console.error("Error completing trivia:", error);
+      res.status(500).json({ message: "Failed to complete trivia" });
+    }
+  });
+
+  router.get('/trivia/stats', async (req: Request, res: Response) => {
+    try {
+      const triviaStats = {
+        totalCorrect: 45,
+        totalQuestions: 60,
+        totalEarned: 22500000, // 22.5M $LERF from trivia
+        perfectScores: 8,
+        currentStreak: 5
+      };
+      res.json(triviaStats);
+    } catch (error) {
+      console.error("Error fetching trivia stats:", error);
+      res.status(500).json({ message: "Failed to fetch trivia stats" });
+    }
+  });
+
+  router.post('/social/connect', async (req: Request, res: Response) => {
+    try {
+      const { platform, username } = req.body;
+      let reward = 100000; // Default 100K $LERF
+      
+      if (platform === 'github') reward = 200000; // 200K for GitHub
+      if (platform === 'twitter') reward = 100000; // 100K for Twitter
+      if (platform === 'discord') reward = 100000; // 100K for Discord
+      
+      res.json({
+        success: true,
+        platform,
+        username,
+        reward,
+        message: `Connected to ${platform}! Earned ${reward.toLocaleString()} $LERF tokens`
+      });
+    } catch (error) {
+      console.error("Error connecting social account:", error);
+      res.status(500).json({ message: "Failed to connect social account" });
+    }
+  });
+
+  router.post('/referral/claim', async (req: Request, res: Response) => {
+    try {
+      const { referralCode } = req.body;
+      const reward = 1000000; // 1M $LERF for referral
+      
+      res.json({
+        success: true,
+        reward,
+        message: `Referral bonus claimed! Earned ${reward.toLocaleString()} $LERF tokens`
+      });
+    } catch (error) {
+      console.error("Error claiming referral:", error);
+      res.status(500).json({ message: "Failed to claim referral bonus" });
+    }
+  });
+
+  router.get('/token/distribution', async (req: Request, res: Response) => {
+    try {
+      const distributionStats = {
+        totalSupply: 100000000000, // 100B $LERF
+        totalDistributed: 15000000000, // 15B distributed so far
+        remainingPools: {
+          community: 25000000000, // 25B remaining for community
+          trivia: 18000000000, // 18B remaining for trivia
+          wallet: 9000000000, // 9B remaining for wallet rewards
+          market: 30000000000 // 30B for market/liquidity
+        },
+        dailyDistribution: 500000000, // 500M $LERF distributed daily
+        activeUsers: 1250
+      };
+      res.json(distributionStats);
+    } catch (error) {
+      console.error("Error fetching distribution stats:", error);
+      res.status(500).json({ message: "Failed to fetch distribution stats" });
+    }
+  });
+
   router.post('/gitbook/publish-openapi', async (req: Request, res: Response) => {
     try {
       const { exec } = require('child_process');

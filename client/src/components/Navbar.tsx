@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SiGitbook } from "react-icons/si";
-import { BookOpen, Code, Coins, BarChart3, Home, Menu, X } from "lucide-react";
+import { BookOpen, Code, Coins, BarChart3, Home, Menu, X, Trophy } from "lucide-react";
 import { useWallet } from "@/hooks/useWallet";
 import { Web3LogoIcon, TokenLogo } from "@/components/Logo";
 import {
@@ -78,8 +78,24 @@ const Navbar = () => {
                         : "text-foreground/70"
                     )}
                   >
-                    <Home className="mr-2 h-4 w-4" />
-                    Home
+                    <Coins className="mr-2 h-4 w-4" />
+                    $LERF Rewards
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link href="/trivia">
+                  <NavigationMenuLink
+                    className={cn(
+                      "group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+                      location === "/trivia"
+                        ? "bg-accent text-accent-foreground"
+                        : "text-foreground/70"
+                    )}
+                  >
+                    <Trophy className="mr-2 h-4 w-4" />
+                    Trivia
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
