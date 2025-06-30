@@ -7,10 +7,15 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   walletAddress: text("wallet_address"),
-  slerfBalance: integer("slerf_balance").default(0),
+  lerfBalance: integer("lerf_balance").default(0),
+  totalEarned: integer("total_earned").default(0),
   referralCode: text("referral_code"),
   referredBy: integer("referred_by").references(() => users.id),
-  tier: text("tier").default("bronze")
+  tier: text("tier").default("bronze"),
+  connectedWallets: jsonb("connected_wallets").default([]),
+  socialConnections: jsonb("social_connections").default({}),
+  lastTriviaDate: timestamp("last_trivia_date"),
+  createdAt: timestamp("created_at").defaultNow()
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
