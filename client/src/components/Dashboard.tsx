@@ -9,7 +9,6 @@ import GitHubConnect from '@/components/GitHubConnect';
 import TokenTradingChart from '@/components/TokenTradingChart';
 import TokenVisualization from '@/components/TokenVisualization';
 import CrossChainLiquidity from '@/components/CrossChainLiquidity';
-import DependencyDashboard from '@/components/DependencyDashboard';
 import { useWallet } from '@/hooks/useWallet';
 import slerfLogo from '@/assets/slerf-logo.svg';
 
@@ -35,25 +34,17 @@ const dashboardStats = {
 
 // Top holders
 const topHolders = [
-  { rank: 1, address: 'Sylvestre Villalba', amount: 15000000, percentage: 15.0, change: 4.2 },
-  { rank: 2, address: '0x7a25E...3A8b', amount: 12500000, percentage: 12.5, change: 2.3 },
-  { rank: 3, address: '0x18bF1...9C4a', amount: 9800000, percentage: 9.8, change: -1.2 },
-  { rank: 4, address: '0x0F3d2...6E1c', amount: 7500000, percentage: 7.5, change: 0.5 },
-  { rank: 5, address: '0xA230B...7D5b', amount: 5200000, percentage: 5.2, change: 3.7 },
+  { rank: 1, address: '0x7a25E...3A8b', amount: 12500000, percentage: 12.5, change: 2.3 },
+  { rank: 2, address: '0x18bF1...9C4a', amount: 9800000, percentage: 9.8, change: -1.2 },
+  { rank: 3, address: '0x0F3d2...6E1c', amount: 7500000, percentage: 7.5, change: 0.5 },
+  { rank: 4, address: '0xA230B...7D5b', amount: 5200000, percentage: 5.2, change: 3.7 },
+  { rank: 5, address: '0x63a9C...8F1d', amount: 4100000, percentage: 4.1, change: 0.0 },
 ];
 
 // Top players this week
 const topPlayers = [
   { 
     rank: 1, 
-    username: 'Sylvestre Villalba', 
-    address: '0xE37bF...6C9d', 
-    score: 18900, 
-    earnedTokens: 22500, 
-    avatar: 'https://api.dicebear.com/7.x/personas/svg?seed=sylvestre&backgroundColor=ffcf70'
-  },
-  { 
-    rank: 2, 
     username: 'crypto_king', 
     address: '0x7a25E...3A8b', 
     score: 12500, 
@@ -61,7 +52,7 @@ const topPlayers = [
     avatar: 'https://api.dicebear.com/7.x/personas/svg?seed=crypto_king&backgroundColor=b6e3f4'
   },
   { 
-    rank: 3, 
+    rank: 2, 
     username: 'lerf_master', 
     address: '0x18bF1...9C4a', 
     score: 11200, 
@@ -69,7 +60,7 @@ const topPlayers = [
     avatar: 'https://api.dicebear.com/7.x/personas/svg?seed=lerf_master&backgroundColor=c0aede'
   },
   { 
-    rank: 4, 
+    rank: 3, 
     username: 'token_whale', 
     address: '0x0F3d2...6E1c', 
     score: 9800, 
@@ -77,12 +68,20 @@ const topPlayers = [
     avatar: 'https://api.dicebear.com/7.x/personas/svg?seed=token_whale&backgroundColor=d1d4f9'
   },
   { 
-    rank: 5, 
+    rank: 4, 
     username: 'blockchain_guru', 
     address: '0xA230B...7D5b', 
     score: 8500, 
     earnedTokens: 10200, 
     avatar: 'https://api.dicebear.com/7.x/personas/svg?seed=blockchain_guru&backgroundColor=ffdfbf'
+  },
+  { 
+    rank: 5, 
+    username: 'defi_degen', 
+    address: '0x63a9C...8F1d', 
+    score: 7200, 
+    earnedTokens: 8500, 
+    avatar: 'https://api.dicebear.com/7.x/personas/svg?seed=defi_degen&backgroundColor=c0e7c0'
   },
 ];
 
@@ -337,11 +336,10 @@ const Dashboard: React.FC = () => {
       
       {/* Main Dashboard Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="glass p-8 rounded-xl">
-        <TabsList className="grid grid-cols-3 md:grid-cols-6 w-full mb-8 p-1.5">
+        <TabsList className="grid grid-cols-4 md:grid-cols-5 w-full mb-8 p-1.5">
           <TabsTrigger value="overview" className="px-5 py-3 text-base">Overview</TabsTrigger>
           <TabsTrigger value="trading" className="px-5 py-3 text-base">Trading</TabsTrigger>
           <TabsTrigger value="network" className="px-5 py-3 text-base">Network</TabsTrigger>
-          <TabsTrigger value="dependency" className="px-5 py-3 text-base">Dependency</TabsTrigger>
           <TabsTrigger value="liquidity" className="px-5 py-3 text-base">Liquidity</TabsTrigger>
           <TabsTrigger value="social" className="hidden md:flex px-5 py-3 text-base">Social</TabsTrigger>
         </TabsList>
@@ -646,11 +644,6 @@ const Dashboard: React.FC = () => {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
-        
-        {/* Dependency Dashboard Tab */}
-        <TabsContent value="dependency">
-          <DependencyDashboard />
         </TabsContent>
         
         {/* Liquidity Tab */}

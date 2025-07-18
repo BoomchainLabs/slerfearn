@@ -9,4 +9,6 @@ export default defineConfig({
   schema: "./shared/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
-    url: 
+    url: process.env.DATABASE_URL,
+  },
+});
