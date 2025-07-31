@@ -1,72 +1,90 @@
-import 'package:english_words/english_words.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import os
+import firebase_admin
+from firebase_admin import credentials, auth
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from dotenv import load_dotenv
+from web3 import Web3
+import uvicorn
 
-void main() {
-  runApp(const SlerfEarnApp());
-}
+# Load .env
+load_dotenv()
 
-class SlerfEarnApp extends StatelessWidget {
-  const SlerfEarnApp({super.key});
+# === Environment Variables ===
+FIREBASE_PROJECT_ID = os.getenv("FIREBASE_PROJECT_ID")
+REWARD_SIGNER_KEY = os.getenv("REWARD_SIGNER_KEY")
+BASE_RPC_URL = os.getenv("BASE_RPC_URL")
+SLERF_CONTRACT = os.getenv("SLERF_CONTRACT")
 
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => SlerfEarnState(),
-      child: MaterialApp(
-        title: 'SlerfEarn',
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-        ),
-        home: const SlerfEarnHomePage(),
-      ),
-    );
-  }
-}
+# === Firebase Admin Init ===
+cred = credentials.Certificate("firebase-admin.json")  # Place your Firebase service account here
+firebase_admin.initialize_app(cred)
 
-class SlerfEarnState extends ChangeNotifier {
-  var current = WordPair.random();
+# === Web3 Setup ===
+w3 = Web3(Web3.HTTPProvider(BASE_RPC_URL))
+account = w3.eth.account.from_key(REWARD_SIGNER_KEY)
+contract = w3.eth.contract(
+    address=Web3.to_checksum_address(SLERF_CONTRACT),
+    abi=[
+        {
+            "inputs": [{"internalType": "address", "name": "recipient", "type": "address"}],
+            "name": "reward",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }
+    ]
+)
 
-  void generateNext() {
-    current = WordPair.random();
-    notifyListeners();
-  }
-}
+# === FastAPI App ===
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with your frontend domain in prod
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-class SlerfEarnHomePage extends StatelessWidget {
-  const SlerfEarnHomePage({super.key});
+class RewardRequest(BaseModel):
+    address: str  # Wallet address
 
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<SlerfEarnState>();
+# === Firebase ID Token Verification ===
+def verify_token(req: Request):
+    auth_header = req.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid token")
+    id_token = auth_header.split(" ")[1]
+    try:
+        decoded_token = auth.verify_id_token(id_token)
+        return decoded_token
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Firebase verification failed")
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('SlerfEarn Generator'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Your Slerf Idea:',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              appState.current.asPascalCase,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () => context.read<SlerfEarnState>().generateNext(),
-              icon: const Icon(Icons.refresh),
-              label: const Text('New Idea'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+# === SLERF Reward Handler ===
+def reward_user(wallet_address: str):
+    nonce = w3.eth.get_transaction_count(account.address)
+    txn = contract.functions.reward(wallet_address).build_transaction({
+        "from": account.address,
+        "nonce": nonce,
+        "gas": 200000,
+        "gasPrice": w3.to_wei("5", "gwei")
+    })
+    signed_txn = w3.eth.account.sign_transaction(txn, REWARD_SIGNER_KEY)
+    tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+    return w3.to_hex(tx_hash)
+
+# === Reward Endpoint ===
+@app.post("/reward")
+async def reward(request: Request, payload: RewardRequest):
+    verify_token(request)  # Firebase verification
+    try:
+        tx = reward_user(payload.address)
+        return {"status": "success", "tx_hash": tx}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Reward failed: {str(e)}")
+
+# === Run Server (if not running via uvicorn CLI) ===
+if __name__ == "__main__":
+    uvicorn.run("slerfearn_server:app", host="0.0.0.0", port=8000, reload=True)
