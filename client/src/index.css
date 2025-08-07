@@ -1,6 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Space+Grotesk:wght@500;700&display=swap');
-@import url('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -27,7 +24,7 @@
   --ring: 240 4.9% 83.9%;
   --radius: 0.5rem;
 
-  /* Custom Slerf colors */
+  /* SlerfEarn Brand Colors */
   --slerf-orange: 24 100% 58%;
   --slerf-purple: 270 64% 55%;
   --slerf-cyan: 187 100% 50%;
@@ -97,101 +94,83 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
+/* SlerfEarn Utility Classes */
 .bg-slerf-orange {
   background-color: rgb(255, 107, 42);
 }
-
 .text-slerf-orange {
   color: rgb(255, 107, 42);
+}
+.border-slerf-orange {
+  border-color: rgb(255, 107, 42);
+}
+.hover\:bg-slerf-orange:hover {
+  background-color: rgb(255, 107, 42);
+}
+.hover\:bg-slerf-orange\/90:hover {
+  background-color: rgba(255, 107, 42, 0.9);
+}
+.hover\:bg-slerf-orange\/10:hover {
+  background-color: rgba(255, 107, 42, 0.1);
+}
+.hover\:text-slerf-orange:hover {
+  color: rgb(255, 107, 42);
+}
+.hover\:border-slerf-orange:hover {
+  border-color: rgb(255, 107, 42);
 }
 
 .bg-slerf-purple {
   background-color: rgb(155, 81, 224);
 }
-
 .text-slerf-purple {
   color: rgb(155, 81, 224);
+}
+.border-slerf-purple {
+  border-color: rgb(155, 81, 224);
+}
+.hover\:bg-slerf-purple:hover {
+  background-color: rgb(155, 81, 224);
+}
+.hover\:bg-slerf-purple\/90:hover {
+  background-color: rgba(155, 81, 224, 0.9);
+}
+.hover\:bg-slerf-purple\/10:hover {
+  background-color: rgba(155, 81, 224, 0.1);
+}
+.hover\:border-slerf-purple:hover {
+  border-color: rgb(155, 81, 224);
 }
 
 .bg-slerf-cyan {
   background-color: rgb(1, 210, 255);
 }
-
 .text-slerf-cyan {
   color: rgb(1, 210, 255);
+}
+.border-slerf-cyan {
+  border-color: rgb(1, 210, 255);
+}
+.hover\:bg-slerf-cyan:hover {
+  background-color: rgb(1, 210, 255);
+}
+.hover\:bg-slerf-cyan\/90:hover {
+  background-color: rgba(1, 210, 255, 0.9);
+}
+.hover\:bg-slerf-cyan\/10:hover {
+  background-color: rgba(1, 210, 255, 0.1);
+}
+.hover\:border-slerf-cyan:hover {
+  border-color: rgb(1, 210, 255);
 }
 
 .bg-slerf-dark {
   background-color: rgb(18, 18, 24);
 }
-
 .text-slerf-light {
   color: rgb(248, 249, 250);
 }
 
-.border-slerf-orange {
-  border-color: rgb(255, 107, 42);
-}
-
-.border-slerf-purple {
-  border-color: rgb(155, 81, 224);
-}
-
-.border-slerf-cyan {
-  border-color: rgb(1, 210, 255);
-}
-
-.hover\:bg-slerf-orange:hover {
-  background-color: rgb(255, 107, 42);
-}
-
-.hover\:bg-slerf-orange\/90:hover {
-  background-color: rgba(255, 107, 42, 0.9);
-}
-
-.hover\:bg-slerf-purple:hover {
-  background-color: rgb(155, 81, 224);
-}
-
-.hover\:bg-slerf-purple\/90:hover {
-  background-color: rgba(155, 81, 224, 0.9);
-}
-
-.hover\:bg-slerf-cyan:hover {
-  background-color: rgb(1, 210, 255);
-}
-
-.hover\:bg-slerf-cyan\/90:hover {
-  background-color: rgba(1, 210, 255, 0.9);
-}
-
-.hover\:text-slerf-orange:hover {
-  color: rgb(255, 107, 42);
-}
-
-.hover\:border-slerf-orange:hover {
-  border-color: rgb(255, 107, 42);
-}
-
-.hover\:bg-slerf-orange\/10:hover {
-  background-color: rgba(255, 107, 42, 0.1);
-}
-
-.hover\:border-slerf-purple:hover {
-  border-color: rgb(155, 81, 224);
-}
-
-.hover\:bg-slerf-purple\/10:hover {
-  background-color: rgba(155, 81, 224, 0.1);
-}
-
-.hover\:border-slerf-cyan:hover {
-  border-color: rgb(1, 210, 255);
-}
-
-.hover\:bg-slerf-cyan\/10:hover {
-  background-color: rgba(1, 210, 255, 0.1);
-}
-  
-  @import './styles/_variables.scss';
+/* Optional SCSS Imports (if using SCSS modules) */
+@import './styles/_variables.scss';
 @import './styles/_keyframe-animations.scss';
