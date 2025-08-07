@@ -192,3 +192,6 @@
 .hover\:bg-slerf-cyan\/10:hover {
   background-color: rgba(1, 210, 255, 0.1);
 }
+  
+  @import './styles/_variables.scss';
+@import './styles/_keyframe-animations.scss';
