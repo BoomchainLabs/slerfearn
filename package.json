@@ -43,7 +43,7 @@
     "@tanstack/react-query": "^5.60.5",
     "clsx": "^2.1.1",
     "framer-motion": "^11.18.2",
-    "lucide-react": "^0.453.0",
+    "lucide-react": "^0.539.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "tw-animate-css": "^1.2.5",
