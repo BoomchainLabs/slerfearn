@@ -4,7 +4,7 @@ hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["zip", "kubernetes-helm", "kubernetes"]
+packages = ["zip", "kubernetes-helm", "kubernetes", "nmh"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -31,6 +31,13 @@ author = "agent"
 task = "shell.exec"
 args = "npm run dev"
 waitForPort = 5000
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
+
+[[ports]]
+localPort = 3001
 
 [[ports]]
 localPort = 5000
