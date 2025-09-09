@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --slerf-orange: #FF6B35;
+  --slerf-dark: #1a1b23;
+}
+
+.slerf-orange {
+  color: var(--slerf-orange);
+}
+
+.bg-slerf-orange {
+  background-color: var(--slerf-orange);
+}
+
+.bg-slerf-dark {
+  background-color: var(--slerf-dark);
+}
+
+.text-slerf-orange {
+  color: var(--slerf-orange);
+}
+
+.border-slerf-orange {
+  border-color: var(--slerf-orange);
+}
+
+.hover\:bg-slerf-orange:hover {
+  background-color: var(--slerf-orange);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2a2b33;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--slerf-orange);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e55d2e;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: color, background-color, border-color, opacity, transform;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark theme overrides */
+.dark {
+  color-scheme: dark;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--slerf-dark);
+  color: white;
+}
+
+/* Animation utilities */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Custom component styles */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.btn-primary {
+  background-color: var(--slerf-orange);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.btn-primary:hover {
+  background-color: #e55d2e;
+  transform: translateY(-1px);
+}
+
+/* Game specific styles */
+.game-card {
+  background: linear-gradient(145deg, #2a2b33, #1e1f26);
+  border: 1px solid #3a3b43;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.game-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(255, 107, 53, 0.2);
+  border-color: var(--slerf-orange);
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+}
