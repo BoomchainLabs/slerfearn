@@ -55,6 +55,7 @@ export default function RootLayout({
         <meta name="format-detection" content="telephone=no" />
         <meta name="msapplication-tap-highlight" content="no" />
         <link rel="mask-icon" href="/icons/icon-192x192.png" color="#FF6B35" />
+        <script async src="/register-sw.js"></script>
       </head>
       <body className="touch-manipulation select-none overscroll-none">
         {children}
