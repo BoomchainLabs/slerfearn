@@ -1,11 +1,18 @@
 import React from 'react'
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#FF6B35'
+}
+
 export const metadata = {
   title: 'SlerfHub - Web3 Rewards Platform',
   description: 'Earn $SLERF tokens through daily missions, staking, gaming, and social activities in the ultimate Web3 rewards ecosystem',
   manifest: '/manifest.json',
-  themeColor: '#FF6B35',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
