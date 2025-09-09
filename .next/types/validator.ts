@@ -59,6 +59,12 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   handler satisfies AppPageConfig<"/games">
 }
 
+// Validate ../../app/games/spin/page.tsx
+{
+  const handler = {} as typeof import("../../app/games/spin/page.js")
+  handler satisfies AppPageConfig<"/games/spin">
+}
+
 // Validate ../../app/page.tsx
 {
   const handler = {} as typeof import("../../app/page.js")
@@ -69,6 +75,18 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   const handler = {} as typeof import("../../app/sentry-example-page/page.js")
   handler satisfies AppPageConfig<"/sentry-example-page">
+}
+
+// Validate ../../app/token/page.tsx
+{
+  const handler = {} as typeof import("../../app/token/page.js")
+  handler satisfies AppPageConfig<"/token">
+}
+
+// Validate ../../app/token/swap/page.tsx
+{
+  const handler = {} as typeof import("../../app/token/swap/page.js")
+  handler satisfies AppPageConfig<"/token/swap">
 }
 
 // Validate ../../app/api/sentry-example-api/route.ts

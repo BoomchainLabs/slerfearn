@@ -1,4 +1,6 @@
 import React from 'react'
+import Navigation from '@/components/Navigation'
+import './globals.css'
 
 export const viewport = {
   width: 'device-width',
@@ -18,27 +20,14 @@ export const metadata = {
     statusBarStyle: 'black-translucent',
     title: 'SlerfHub'
   },
-  openGraph: {
-    title: 'SlerfHub - Web3 Rewards Platform',
-    description: 'Earn $SLERF tokens through daily missions, staking, gaming, and social activities',
-    type: 'website',
-    locale: 'en_US'
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'SlerfHub - Web3 Rewards Platform',
-    description: 'Earn $SLERF tokens through daily missions, staking, gaming, and social activities',
-    site: '@slerf00',
-    creator: '@slerf00'
-  },
-  other: {
-    'mobile-web-app-capable': 'yes',
-    'apple-mobile-web-app-capable': 'yes',
-    'apple-mobile-web-app-status-bar-style': 'black-translucent',
-    'apple-mobile-web-app-title': 'SlerfHub',
-    'application-name': 'SlerfHub',
-    'msapplication-TileColor': '#FF6B35',
-    'msapplication-tap-highlight': 'no'
+  icons: {
+    icon: [
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' }
+    ],
+    apple: [
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' }
+    ]
   }
 }
 
@@ -48,26 +37,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
-        <link rel="icon" href="/icons/icon-192x192.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-        <link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png" />
-        <link rel="apple-touch-icon" sizes="96x96" href="/icons/icon-96x96.png" />
-        <link rel="apple-touch-icon" sizes="128x128" href="/icons/icon-128x128.png" />
-        <link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png" />
-        <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
-        <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png" />
-        <meta name="apple-touch-fullscreen" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="msapplication-tap-highlight" content="no" />
-        <link rel="mask-icon" href="/icons/icon-192x192.png" color="#FF6B35" />
-        <script async src="/register-sw.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="touch-manipulation select-none overscroll-none">
-        {children}
+      <body className="font-inter antialiased bg-slerf-dark text-white min-h-screen">
+        <Navigation />
+        <main>{children}</main>
       </body>
     </html>
   )
