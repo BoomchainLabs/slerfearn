@@ -42,3 +42,6 @@ localPort = 3001
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[agent]
+integrations = ["javascript_object_storage:1.0.0"]
