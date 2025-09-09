@@ -20,7 +20,9 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'SlerfHub - Web3 Rewards Platform',
-    description: 'Earn $SLERF tokens through daily missions, staking, gaming, and social activities'
+    description: 'Earn $SLERF tokens through daily missions, staking, gaming, and social activities',
+    site: '@slerf00',
+    creator: '@slerf00'
   },
   other: {
     'mobile-web-app-capable': 'yes',

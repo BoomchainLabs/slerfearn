@@ -12,6 +12,12 @@
   "categories": ["finance", "games", "social"],
   "lang": "en",
   "dir": "ltr",
+  "related_applications": [
+    {
+      "platform": "web",
+      "url": "https://twitter.com/slerf00"
+    }
+  ],
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
