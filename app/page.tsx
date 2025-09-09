@@ -7,6 +7,11 @@ import { slerfContract } from '@/lib/web3/slerf-contract';
 import { Gamepad2, Coins, Target, TrendingUp, ArrowRight, Play, Gift, Star, Zap } from 'lucide-react';
 
 export default function HomePage() {
+  // Redirect to landing page for now
+  if (typeof window !== 'undefined') {
+    window.location.href = '/landing';
+    return null;
+  }
   const { wallet, connectWallet } = useWallet();
   const [slerfBalance, setSlerfBalance] = useState('0');
   const [isLoading, setIsLoading] = useState(false);
