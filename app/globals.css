@@ -127,9 +127,182 @@ body {
   border-color: var(--slerf-orange);
 }
 
+/* Enhanced Mobile Touch Interactions */
+.touch-target {
+  min-height: 48px;
+  min-width: 48px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.touch-feedback {
+  transition: all 0.15s ease;
+}
+
+.touch-feedback:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+/* Mobile Game Enhancements */
+.mobile-game-card {
+  border-radius: 1rem;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  background: linear-gradient(145deg, rgba(42, 43, 51, 0.8), rgba(30, 31, 38, 0.8));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 107, 53, 0.2);
+}
+
+.mobile-game-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  min-height: 48px;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-game-button:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.4);
+}
+
+/* Spin Wheel Mobile Optimizations */
+.spin-wheel-mobile {
+  width: 280px;
+  height: 280px;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .spin-wheel-mobile {
+    width: 320px;
+    height: 320px;
+  }
+}
+
+/* Match Game Grid Mobile */
+.match-grid-mobile {
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.match-tile-mobile {
+  aspect-ratio: 1;
+  border-radius: 0.5rem;
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 60px;
+  min-width: 60px;
+}
+
+.match-tile-mobile:active {
+  transform: scale(0.95);
+}
+
+/* Mobile Navigation Improvements */
+.mobile-nav-item {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.mobile-nav-item:active {
+  transform: scale(0.98);
+  background-color: rgba(255, 107, 53, 0.2);
+}
+
+/* Stats and Info Cards Mobile */
+.mobile-stats-card {
+  background: rgba(42, 43, 51, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Enhanced Button Animations for Mobile */
+@media (hover: none) and (pointer: coarse) {
+  .hover\:scale-105:hover {
+    transform: none;
+  }
+  
+  .hover\:shadow-xl:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  }
+  
+  .game-card:hover {
+    transform: none;
+  }
+}
+
 /* Responsive utilities */
 @media (max-width: 768px) {
   .container {
     padding: 0 0.75rem;
+  }
+  
+  /* Mobile-first font sizes */
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+  
+  /* Ensure sufficient spacing for touch targets */
+  .grid {
+    gap: 0.75rem;
+  }
+  
+  /* Mobile wallet connection */
+  .wallet-button-mobile {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+  
+  .mobile-game-card {
+    margin: 0.25rem 0;
+    padding: 0.75rem;
+  }
+  
+  .spin-wheel-mobile {
+    width: 250px;
+    height: 250px;
+  }
+  
+  .match-tile-mobile {
+    min-height: 50px;
+    min-width: 50px;
+    font-size: 1.25rem;
   }
 }

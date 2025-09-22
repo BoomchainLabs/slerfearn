@@ -216,7 +216,7 @@ export default function SpinGamePage() {
           <div className="grid lg:grid-cols-2 gap-8 items-start">
             {/* Spin Wheel */}
             <div className="relative">
-              <div className="relative w-80 h-80 mx-auto">
+              <div className="relative spin-wheel-mobile">
                 {/* Wheel */}
                 <div 
                   className="w-full h-full rounded-full border-8 border-yellow-400 relative overflow-hidden transition-transform duration-3000 ease-out"
@@ -271,9 +271,9 @@ export default function SpinGamePage() {
                 <button
                   onClick={handleSpin}
                   disabled={!canSpin || isSpinning}
-                  className={`px-12 py-4 rounded-xl font-bold text-xl transition-all ${
+                  className={`mobile-game-button touch-target touch-feedback px-12 py-4 rounded-xl font-bold text-xl ${
                     canSpin && !isSpinning
-                      ? 'bg-slerf-orange hover:bg-orange-600 text-white transform hover:scale-105'
+                      ? 'bg-slerf-orange hover:bg-orange-600 text-white'
                       : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                   }`}
                 >

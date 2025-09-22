@@ -331,7 +331,7 @@ export default function MatchOutGame() {
 
             {/* Game Grid */}
             <div 
-              className={`grid gap-3 max-w-2xl mx-auto`}
+              className={`grid match-grid-mobile max-w-2xl mx-auto`}
               style={{
                 gridTemplateColumns: `repeat(${getDifficultySettings(difficulty).gridCols}, 1fr)`,
               }}
@@ -340,7 +340,7 @@ export default function MatchOutGame() {
                 <div
                   key={tile.id}
                   onClick={() => handleTileClick(tile.id)}
-                  className={`aspect-square rounded-lg border-2 flex items-center justify-center text-4xl cursor-pointer transition-all duration-300 ${
+                  className={`match-tile-mobile transition-all duration-300 ${
                     tile.matched
                       ? 'bg-green-500/30 border-green-400'
                       : tile.flipped
