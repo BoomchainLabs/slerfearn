@@ -46,6 +46,7 @@ export default function RootLayout({
       <body className="font-inter antialiased bg-slerf-dark text-white min-h-screen">
         <Navigation />
         <main>{children}</main>
+        <script src="/register-sw.js" async></script>
       </body>
     </html>
   )
