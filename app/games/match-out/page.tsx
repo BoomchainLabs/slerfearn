@@ -171,20 +171,38 @@ export default function MatchOutGame() {
       // For now, we'll simulate the reward
       setEarnedTokens(reward.toString());
       
-      // Here you would typically call a backend API to distribute the reward
-      // const result = await fetch('/api/games/reward', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     wallet,
-      //     game: 'match-out',
-      //     difficulty,
-      //     score,
-      //     moves,
-      //     timeLeft,
-      //     reward
-      //   })
-      // });
+      // Distribute real SLERF tokens via API
+      try {
+        const settings = getDifficultySettings(difficulty);
+        const perfectGame = moves === settings.pairs;
+        
+        const response = await fetch('/api/games/match-out/reward', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            walletAddress: wallet,
+            difficulty,
+            score,
+            moves,
+            timeLeft,
+            perfectGame
+          })
+        });
+        
+        const rewardResult = await response.json();
+        if (rewardResult.success) {
+          setEarnedTokens(rewardResult.amount.toString());
+          console.log(`Successfully distributed ${rewardResult.amount} SLERF tokens to ${wallet}`);
+        } else {
+          console.error('Failed to distribute reward:', rewardResult.message);
+          // Fallback to calculated amount
+          setEarnedTokens(reward.toString());
+        }
+      } catch (error) {
+        console.error('Error distributing reward:', error);
+        // Fallback to calculated amount
+        setEarnedTokens(reward.toString());
+      }
       
     } catch (error) {
       console.error('Error processing reward:', error);

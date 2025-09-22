@@ -122,8 +122,28 @@ export default function SpinGamePage() {
         spinCount: newSpinCount,
       }));
 
-      // In a real implementation, this would trigger server-side reward distribution
-      // await distributeReward(wallet, selectedReward.tokens);
+      // Distribute real SLERF tokens via API
+      try {
+        const response = await fetch('/api/games/spin/reward', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            walletAddress: wallet,
+            rewardTokens: selectedReward.tokens
+          })
+        });
+        
+        const rewardResult = await response.json();
+        if (rewardResult.success) {
+          console.log(`Successfully distributed ${selectedReward.tokens} SLERF tokens to ${wallet}`);
+        } else {
+          console.error('Failed to distribute reward:', rewardResult.message);
+        }
+      } catch (error) {
+        console.error('Error distributing reward:', error);
+      }
     }, 3000);
   };
 

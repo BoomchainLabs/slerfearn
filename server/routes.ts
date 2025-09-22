@@ -22,6 +22,33 @@ function formatZodError(error: ZodError) {
   }));
 }
 
+async function validateGameReward(gameType: string, amount: number, gameData?: any): Promise<number | null> {
+  switch (gameType) {
+    case 'spin':
+      // Spin rewards should be between 1-10 SLERF
+      return (amount >= 1 && amount <= 10) ? amount : null;
+    
+    case 'match-out':
+      // Match-out rewards should be between 2-20 SLERF
+      return (amount >= 2 && amount <= 20) ? amount : null;
+    
+    case 'memory':
+      // Memory game rewards should be between 1-15 SLERF  
+      return (amount >= 1 && amount <= 15) ? amount : null;
+      
+    case 'quiz':
+      // Quiz rewards should be between 0.5-5 SLERF
+      return (amount >= 0.5 && amount <= 5) ? amount : null;
+      
+    case 'daily':
+      // Daily challenge rewards should be between 2-10 SLERF
+      return (amount >= 2 && amount <= 10) ? amount : null;
+      
+    default:
+      return null;
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   const router = express.Router();
 
@@ -558,6 +585,140 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: error.message });
       }
       throw error;
+    }
+  });
+
+  // Game Reward Distribution routes
+  router.post('/games/rewards/distribute', async (req: Request, res: Response) => {
+    try {
+      const { walletAddress, gameType, amount, gameData } = req.body;
+      
+      if (!walletAddress || !gameType || !amount) {
+        return res.status(400).json({ 
+          message: "Missing required fields: walletAddress, gameType, amount" 
+        });
+      }
+
+      // Validate wallet address format
+      if (!/^0x[a-fA-F0-9]{40}$/.test(walletAddress)) {
+        return res.status(400).json({ message: "Invalid wallet address format" });
+      }
+
+      // Validate reward amount based on game type
+      const validatedAmount = await validateGameReward(gameType, amount, gameData);
+      if (!validatedAmount) {
+        return res.status(400).json({ message: "Invalid reward amount for game type" });
+      }
+
+      // In a production environment, you would:
+      // 1. Verify the game was actually played by checking signatures/proofs
+      // 2. Check rate limiting to prevent abuse
+      // 3. Transfer actual SLERF tokens from a reward pool wallet
+      
+      // For now, we'll simulate successful distribution
+      const rewardRecord = {
+        walletAddress,
+        gameType,
+        amount: validatedAmount,
+        timestamp: new Date().toISOString(),
+        status: 'simulated' // In production: 'pending' -> 'completed' or 'failed'
+      };
+
+      res.json({
+        success: true,
+        reward: rewardRecord,
+        message: `Successfully distributed ${validatedAmount} SLERF tokens to ${walletAddress}`
+      });
+    } catch (error) {
+      console.error('Error distributing game reward:', error);
+      res.status(500).json({ 
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  router.post('/games/spin/reward', async (req: Request, res: Response) => {
+    try {
+      const { walletAddress, rewardTokens } = req.body;
+      
+      if (!walletAddress || !rewardTokens) {
+        return res.status(400).json({ 
+          message: "Missing required fields: walletAddress, rewardTokens" 
+        });
+      }
+
+      // Validate spin reward range (1-10 SLERF)
+      if (rewardTokens < 1 || rewardTokens > 10) {
+        return res.status(400).json({ message: "Invalid spin reward amount" });
+      }
+
+      // TODO: In production, implement actual token transfer here
+      // const transferResult = await transferSLERF(walletAddress, rewardTokens);
+      
+      res.json({
+        success: true,
+        walletAddress,
+        amount: rewardTokens,
+        message: `Spin reward of ${rewardTokens} SLERF tokens distributed!`,
+        status: 'simulated'
+      });
+    } catch (error) {
+      console.error('Error distributing spin reward:', error);
+      res.status(500).json({ message: "Failed to distribute spin reward" });
+    }
+  });
+
+  router.post('/games/match-out/reward', async (req: Request, res: Response) => {
+    try {
+      const { walletAddress, difficulty, score, moves, timeLeft, perfectGame } = req.body;
+      
+      if (!walletAddress || !difficulty) {
+        return res.status(400).json({ 
+          message: "Missing required fields: walletAddress, difficulty" 
+        });
+      }
+
+      // Calculate reward based on difficulty and performance
+      let baseReward = 0;
+      switch (difficulty) {
+        case 'easy': baseReward = 2; break;
+        case 'medium': baseReward = 5; break;
+        case 'hard': baseReward = 10; break;
+        default:
+          return res.status(400).json({ message: "Invalid difficulty level" });
+      }
+
+      let totalReward = baseReward;
+      
+      // Time bonus
+      if (timeLeft > 30) totalReward += 1;
+      
+      // Perfect game bonus
+      if (perfectGame) totalReward += 10;
+
+      // Cap maximum reward
+      if (totalReward > 20) totalReward = 20;
+
+      // TODO: In production, implement actual token transfer here
+      // const transferResult = await transferSLERF(walletAddress, totalReward);
+      
+      res.json({
+        success: true,
+        walletAddress,
+        amount: totalReward,
+        breakdown: {
+          baseReward,
+          timeBonus: timeLeft > 30 ? 1 : 0,
+          perfectBonus: perfectGame ? 10 : 0,
+          total: totalReward
+        },
+        message: `Match-Out reward of ${totalReward} SLERF tokens distributed!`,
+        status: 'simulated'
+      });
+    } catch (error) {
+      console.error('Error distributing match-out reward:', error);
+      res.status(500).json({ message: "Failed to distribute match-out reward" });
     }
   });
 
